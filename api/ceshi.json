@@ -1,0 +1,51 @@
+{
+	"sort": 1,
+	"icon": "",
+	"id": 6905,
+	"goods_list": [{
+		"sell_time_status": 0,
+		"id": 65825,
+		"is_sell": true,
+		"pack_cost": "0.00",
+		"sales": 487,
+		"goods_type": 1,
+		"cover_img": "",
+		"property": [],
+		"goods_meals_info": [],
+		"is_add": 1,
+		"use_spec": false,
+		"entity": [{
+			"spec_id": "",
+			"trade_mark": "11110090",
+			"id": "9ad36aa96636c246",
+			"stock": "9999956.00",
+			"spec_text": [],
+			"spec": [],
+			"image": "s23107/2020/04/19/fda6dd99c83af02353.jpg",
+			"num": 1,
+			"price": 18.5,
+			"membership_price": 0
+		}],
+		"stall_code": "",
+		"sort": 99,
+		"price": 18.5,
+		"unit": "件",
+		"imageArr": [
+			"https://img-shop.qmimg.cn/s23107/2020/04/19/fda6dd99c83af02353.jpg?imageView2/2/w/600/h/600"
+		],
+		"membership_price": 0,
+		"use_property": 0,
+		"unit_type": 0,
+		"min_buy_num": 0,
+		"specs": [],
+		"content": "购买三明治,享早餐指定饮品半价",
+		"is_follow_suit": 1,
+		"stock": "9999956.00",
+		"type": 2,
+		"is_label": 0,
+		"name": "奈雪早餐",
+		"images": "https://img-shop.qmimg.cn/s23107/2020/04/19/fda6dd99c83af02353.jpg?imageView2/2/w/400/h/400"
+	}],
+	"name": "奈雪早餐",
+	"is_show_backstage": 0
+}

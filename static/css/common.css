@@ -1,0 +1,195 @@
+body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, dl, dt, dd, ul, ol, li, pre, form, fieldset, legend, button, input, textarea, th, td { margin:0; padding:0; }
+body, button, input, select, textarea { font:12px/1.5tahoma, arial, \5b8b\4f53; }
+h1, h2, h3, h4, h5, h6{ font-size:100%; }
+address, cite, dfn, em, var { font-style:normal; }
+code, kbd, pre, samp { font-family:couriernew, courier, monospace; }
+small{ font-size:12px; }
+ul,li,ol { list-style:none; }
+a { text-decoration:none; }
+a:hover { text-decoration:underline; }
+sup { vertical-align:text-top; }
+sub{ vertical-align:text-bottom; }
+legend { color:#000; }
+fieldset, img { border:0; }
+button, input, select, textarea { font-size:100%; }
+input,button{outline-style: none;}
+table { border-collapse:collapse; border-spacing:0; }
+html,body{height: 100%;}
+body{font-size: 16px;font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;color:#000;}
+input{width:100%;background:transparent;border:none;color:#000;-webkit-appearance: none; /*去除系统默认的样式*/-webkit-tap-highlight-color: rgba(0, 0, 0, 0); /* 点击高亮的颜色*/}
+input[type=checkbox]{-webkit-appearance: checkbox;width:auto;}
+input[type=radio]{-webkit-appearance: radio;width:auto;}
+input::placeholder{color:#959595;}
+textarea{border:none;-webkit-appearance: none;resize:none}
+textarea:focus {outline: none;}
+img{max-width: 100%;}
+i{margin-right:2px ;}
+
+/* 滚动条样式 */
+/* 
+1. ::-webkit-scrollbar 滚动条整体部分
+
+2. ::-webkit-scrollbar-thumb 滚动条里面的小方块，能向上向下移动（或向左向右移动）
+
+3. ::-webkit-scrollbar-track 滚动条的轨道（里面装有Thumb）
+
+4. ::-webkit-scrollbar-button 滚动条的轨道的两端按钮，由于通过点击微调小方块的位置。
+
+5. ::-webkit-scrollbar-track-piece 内层轨道，滚动条中间部分
+
+6. ::-webkit-scrollbar-corner 边角，即垂直滚动条和水平滚动条相交的地方
+
+7. ::-webkit-resizer 两个滚动条的交汇处上用于拖动调整元素大小的小控件
+*/
+/* 滚动条样式设置 */
+::-webkit-scrollbar {
+  width:0px;
+  height:0px;
+}
+
+
+input[type="checkbox"],input[type=radio] {width: 20px;height: 20px;display: inline-block;text-align: center;vertical-align: middle;line-height: 18px;margin-right: 10px;position: relative;}
+input[type="checkbox"]::before,input[type=radio]::before {content: "";position: absolute;top: 0;left: 0;background: #fff;width: 100%;height: 100%;border: 1px solid #d9d9d9;border-radius: 4px;}
+input[type="checkbox"]:checked::before,input[type=radio]:checked::before {content: "\2713";background-color: #108ee9;position: absolute;top: 0;left: 0;width: 100%;border: 1px solid #108ee9;border-radius:4px;color: #fff;font-size: 20px;font-weight: bold;}
+
+
+/* flex布局 */
+.flex{display: flex;}
+.flex-between{display: flex;justify-content: space-between;}
+.flex-align{display: flex;align-items: center;}
+.j-flex{display: flex;justify-content: space-between;align-items: center;}
+.j-flex-col{display: flex;flex-direction: column;}
+.j-flex-row{ display: flex;display: -webkit-flex;justify-content: space-between;flex-direction: row;flex-wrap: wrap;}
+
+/* flex布局子元素居中 */
+.flex-center{flex: 1;text-align:center;}
+.flex-adapt{flex:1;}
+.flex-width{width:50%;}
+
+/* 虚线 */
+.j-line{width: 100%;height:1px;background-image: linear-gradient(to right,#ccc 0%,#ccc 50%,transparent 50%);background-size: 15px 1px;background-repeat: repeat-x;}
+
+/* 文字超出省略号 单行  和 多行 webkit-line-clamp设置行数*/
+.text-overflow{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+/* 可以解决flex布局下文本超出不生效问题 */
+.text-overflowMut{display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1;overflow: hidden;}
+/* 占满当前父元素盒子 */
+.j-full-curbox{position:absolute;top:0;left:0;right:0;bottom:0;margin:0;overflow:auto;}
+.j-full-center{position: absolute;top:50%;left: 50%;transform: translate(-50%,-50%);}
+
+/* 元素禁止事件 */
+.ban{pointer-events: none;background-color: #ccc !important; }
+.ban-child > *{pointer-events: none;background-color: #F1F1F1;}
+
+/* 文字状态类颜色 */
+.col-success{color:#666}
+.col-wait{color:#f37b1d}
+.col-cancel{color:#8799a3}
+
+
+/* 颜色 */
+.bg108{background-color:#108ee9;}
+.bg167{background-color:#1678fd;}
+.bgfff{background-color:#fff;}
+.bgddd{background-color:#ddd;}
+.bgccc{background-color:#ccc;}
+.bg999{background-color:#999;}
+.bg646{background-color:#646464;}
+.bgdcd{background-color: #dcdfe6;}
+.bgf33{background-color:#f33;}
+.bgd9d{background-color: #d9d9d9;}
+.bgf1f{background-color: #f1f2f6;}
+
+.bg04{background-color: rgba(0,0,0,.04);}
+.bg08{background-color: rgba(0,0,0,.08);}
+.bg12{background-color: rgba(0,0,0,.12);}
+.bg16{background-color: rgba(0,0,0,.16);}
+.bg20{background-color: rgba(0,0,0,.20);}
+.bg24{background-color: rgba(0,0,0,.24);}
+
+.colf33{color:#f33;}
+.col108{color:#108ee9;}
+.col167{color:#1678fd;}
+.colfff{color:#fff;}
+.colddd{color:#ddd;}
+.colccc{color:#ccc;}
+.col999{color:#999;}
+.colc1c{color:#c1c1c1;}
+.col646{color:#646464;}
+.coldcd{color: #dcdfe6;}
+.cold9d{color: #d9d9d9;}
+.col919{color: #919293;}
+.col97a{color:#97af13}
+.col5A5{color: #5A5B5C;}
+.colfe7{color:#fe7f66;}
+.colfc4{color:#fc4141;}
+
+.rgba04{color: rgba(0,0,0,.04);}
+.rgba08{color: rgba(0,0,0,.08);}
+.rgba12{color: rgba(0,0,0,.12);}
+.rgba16{color: rgba(0,0,0,.16);}
+.rgba20{color: rgba(0,0,0,.20);}
+.rgba24{color: rgba(0,0,0,.24);}
+
+/* 字体 */
+.font12 { font-size: 24rpx;}
+.font14 { font-size: 28rpx;}
+.font16 { font-size: 32rpx;}
+.font18 { font-size: 36rpx;}
+.font20 { font-size: 40rpx;}
+.font22 { font-size: 44rpx;}
+.font24 { font-size: 48rpx;}
+.font26 { font-size: 52rpx;}
+.font28 { font-size: 56rpx;}
+.font30 { font-size: 60rpx;}
+
+/* padding */
+.p-10{padding:20rpx;}
+.pb-10{padding-bottom:20rpx;}
+.pt-10{padding-top: 20rpx;}
+.pr-10{padding-right:20rpx;}
+.pl-10{padding-left: 20rpx;}
+
+.p-15{padding:30rpx;}
+.pb-15{padding-bottom:30rpx;}
+.pt-15{padding-top: 30rpx;}
+.pr-15{padding-right:30rpx;}
+.pl-15{padding-left: 30rpx;}
+
+.p-20{padding:40rpx;}
+.pb-20{padding-bottom:40rpx;}
+.pt-20{padding-top: 40rpx;}
+.pr-20{padding-right:40rpx;}
+.pl-20{padding-left: 40rpx;}
+
+.p-30{padding:60rpx;}
+.pb-30{padding-bottom:60rpx;}
+.pt-30{padding-top: 60rpx;}
+.pr-30{padding-right:60rpx;}
+.pl-30{padding-left: 60rpx;}
+
+/* margin */
+.m-10{margin:20rpx;}
+.mb-10{margin-bottom:20rpx;}
+.mt-10{margin-top: 20rpx;}
+.mr-10{margin-right:20rpx;}
+.ml-10{margin-left: 20rpx;}
+
+.m-15{margin:30rpx;}
+.mb-15{margin-bottom:30rpx;}
+.mt-15{margin-top: 30rpx;}
+.mr-15{margin-right:30rpx;}
+.ml-15{margin-left: 30rpx;}
+
+.m-20{margin:40rpx;}
+.mb-20{margin-bottom:40rpx;}
+.mt-20{margin-top: 40rpx;}
+.mr-20{margin-right:40rpx;}
+.ml-20{margin-left: 40rpx;}
+
+.m-30{margin:60rpx;}
+.mb-30{margin-bottom:60rpx;}
+.mt-30{margin-top: 60rpx;}
+.mr-30{margin-right:60rpx;}
+.ml-30{margin-left: 60rpx;}
+

@@ -1,0 +1,117 @@
+// 最外层盒子  每列 自己结合flex布局使用
+.box{
+	padding:40rpx 20rpx;
+	background-color: #fff;
+	border-radius: 10rpx;
+	margin: 0 18rpx 18rpx 18rpx;
+	// 盒子标题
+	.box-title{
+		margin-bottom:15rpx;
+		font-weight: bold;
+	}
+	// 每列
+	.menu{
+		padding:40rpx 0;
+		// 每列 title
+		.menu-title{
+			width: 300rpx;
+		}
+		// 每列内容
+		.menu-content{
+			color:#999;
+		}
+	}
+}
+	
+button{
+	&[type='primary'] {
+		background-color: #a8d458;
+		color:#fff;
+		&::after {
+			border: 0;
+		}
+		&.button-hover {
+			background-color: #d5da91;
+			color:#fff;
+		}
+	}
+	&[type='success'] {
+		background-color: #409eff;
+		color:#fff;
+		&::after {
+			border: 0;
+		}
+		&.button-hover {
+			background-color: #66b1ff;
+			color:#fff;
+		}
+	}
+	&[type='warning'] {
+		background-color: #e6a23c;
+		color:#fff;
+		&::after {
+			border: 0;
+		}
+		&.button-hover {
+			background-color: #ebb563;
+			color:#fff;
+		}
+	}
+	&[type='danger'] {
+		background-color: #f56c6c;
+		&::after {
+			border: 0;
+		}
+		&.button-hover {
+			background-color: #f78989;
+		}
+	}
+}
+	
+	
+/* #ifdef APP-PLUS ||MP-WEIXIN */
+	checkbox .wx-checkbox-input {
+		width: 30rpx;
+		height: 30rpx;
+		border-radius: 50% !important;
+		color: #ffffff !important;
+	}
+
+	checkbox .wx-checkbox-input.wx-checkbox-input-checked::before {
+		content: '';
+		width: 90%;
+		height: 90%;
+		border-radius: 50% !important;
+		color: #fff;
+		background: #4cd964;
+	}
+/* #endif */
+	
+	
+/* 复选框未选中前的样式 */
+/deep/ .uni-checkbox-input {
+	width: 36upx;
+	height: 36upx;
+	border-radius: 50%;
+	margin-right: 0;
+}
+
+/* 复选框取消默认样式 */
+/deep/ uni-checkbox .uni-checkbox-input.uni-checkbox-input-checked:before {
+		font: normal normal normal 14px/1 uni;
+		content: "\EA08";
+		font-size: 0; /* 重点使用这一步取消的默认样式 */
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%,-48%) scale(.73);
+		-webkit-transform: translate(-50%,-48%) scale(.73);
+}
+
+/* 重新定义复选框选中后的样式*/
+/deep/ .uni-checkbox-input-checked::before {
+	width: 20upx;
+	height: 20upx;
+	/* background: #007aff; */
+	/* border-radius: 50%; */
+}
