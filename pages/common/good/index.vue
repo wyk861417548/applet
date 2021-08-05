@@ -192,9 +192,7 @@
 			}
 		},
 		onLoad() {
-			// this.init('good');
-			this.currentIndex = this.goods[0].id;
-			this.category_title.title = this.goods[0].name;
+			
 			return;
 			this.getData();
 			if(this.$store.state.cartStatus == false){
@@ -203,6 +201,9 @@
 			
 		},
 		onShow() {
+			// this.init('good');
+			// this.currentIndex = this.goods[0].id;
+			// this.category_title.title = this.goods[0].name;
 			return;
 			// cartStatus 购物车状态  默认false首次进入会请求一次，当确定提交订单之后该状态才会改变
 			if(this.$store.state.cartStatus){

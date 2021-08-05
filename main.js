@@ -2,6 +2,8 @@ import Vue from 'vue'
 import App from './App'
 import store from './store/index.js'
 import config from './api/config.js';
+import cloud from './api/cloud.js';
+import validator from './api/validator.js';
 
 // 引入全局uView
 import uView from 'uview-ui';
@@ -12,6 +14,8 @@ Vue.config.productionTip = false
 
 Vue.prototype.$store = store;
 Vue.prototype.$config = config;
+Vue.prototype.$cloud = cloud;
+Vue.prototype.$validator = validator;
 
 App.mpType = 'app'
 

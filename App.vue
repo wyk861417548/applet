@@ -2,6 +2,7 @@
 	export default {
 		onLaunch: function() {
 			console.log('App Launch')
+		
 		},
 		onShow: function() {
 			console.log('App Show')
@@ -18,6 +19,7 @@
 	@import "uview-ui/index.scss";
 	// 注意引入外部scss 这样写
 	@import "@/static/css/app.scss";
+	
 	page{
 		background-color: #ededed;
 	}
