@@ -19,10 +19,11 @@ export default  {
 		
 		return new Promise((resolve,reject)=>{
 			uniCloud.callFunction({
-				name: data.name,
+				name: data.name?data.name:'uni-id-login',
 				data: {
 					action: data.action,
-					params: data.params
+					params: data.params,
+					uniIdToken:uni.getStorageSync('uni_id_token')
 				},
 				
 				success(res) {

@@ -25,7 +25,6 @@ App.mpType = 'app'
  * */
 Vue.prototype.$skip = (e)=>{
 	var url = e.currentTarget.dataset.url;
-	console.log("nihoa",url,e);
 	if(!url)return;
 	uni.navigateTo({url:url})
 }

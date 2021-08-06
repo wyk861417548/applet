@@ -5,11 +5,12 @@ exports.main = async (event, context) => {
   uniID = uniID.createInstance({
     context
   })
-  /* 如果你通过云函数Url访问
-   * 使用GET时参数位于event.queryStringParameters
-   * 使用POST时参数位于event.body
-   * 请自行处理上述场景
-   */
+ /*
+ 1.event为客户端 uniCloud.callFunction填写的data的值，这里介绍一下其中的属性
+   action：表示要执行的任务名称、比如：登陆login、退出登陆 logout等
+   params：业务数据内容
+   uniIdToken：系统自动传递的token，数据来源客户端的 uni.getStorageSync('uni_id_token')
+ */
 	/*
 	2.在某些操作之前我们要对用户对身份进行校验（也就是要检查用户的token）再将得到的uid写入params.uid
 	  校验用到的方法是uniID.checkToken 详情：https://uniapp.dcloud.io/uniCloud/uni-id?id=checktoken
@@ -28,10 +29,15 @@ exports.main = async (event, context) => {
 	  所以这里我们需要将uniID.checkToken返回的uid写入到params.uid
 	*/
   let params = event.params || {}
+	
   let payload = {}
-  let noCheckAction = ['register', 'checkToken', 'encryptPwd', 'login', 'loginByWeixin', 'loginByQQ', 'sendSmsCode',
-    'setVerifyCode', 'loginBySms', 'loginByEmail', 'code2SessionWeixin', 'code2SessionAlipay'
+	
+	
+	// 这些请求是不需要token的
+  let noCheckAction = ['register', 'checkToken', 'encryptPwd', 'login', 'loginByWeixin', 'sendSmsCode',
+    'setVerifyCode', 'loginBySms', 'code2SessionWeixin' 
   ]
+
   if (noCheckAction.indexOf(event.action) === -1) {
     if (!event.uniIdToken) {
       return {
@@ -39,14 +45,17 @@ exports.main = async (event, context) => {
         msg: '缺少token'
       }
     }
-    payload = await uniID.checkToken(event.uniIdToken, {
-      needPermission: true
-    })
-    if (payload.code && payload.code > 0) {
-      return payload
-    }
+		let payload = await uniID.checkToken(event.uniIdToken)
+		if (payload.code && payload.code > 0) {
+			return payload
+		}
+    
+		console.log("payload",payload);
+		
     params.uid = payload.uid
   }
+	
+	console.log("uid",params);
   let res = {}
 
   switch (event.action) {
@@ -59,7 +68,8 @@ exports.main = async (event, context) => {
       res = await uniID.register({
         username,
         password,
-        needPermission
+        needPermission,
+				role:'user'
       });
       break;
     }
@@ -73,8 +83,9 @@ exports.main = async (event, context) => {
         username,
         password,
         needPermission,
+				role:'user',
         // 不指定queryField的情况下只会查询username
-        queryField: ['username', 'email', 'mobile']
+        queryField: ['username', 'email', 'mobile','role']
       });
       break;
     }
@@ -94,6 +105,13 @@ exports.main = async (event, context) => {
       });
       break;
     }
+		case 'getUserInfo': {
+		  const {uid} = params
+		  res = await uniID.getUserInfo({
+		    uid
+		  });
+		  break;
+		}
     case 'setAvatar': {
       const {
         uid,
@@ -131,32 +149,6 @@ exports.main = async (event, context) => {
       });
       break;
     }
-    case 'bindEmail': {
-      const {
-        uid,
-        email,
-        code
-      } = params
-      res = await uniID.bindEmail({
-        uid,
-        email,
-        code
-      });
-      break;
-    }
-    case 'unbindEmail': {
-      const {
-        uid,
-        email,
-        code
-      } = params
-      res = await uniID.unbindEmail({
-        uid,
-        email,
-        code
-      });
-      break;
-    }
     case 'code2SessionWeixin': {
       const {
         code
@@ -189,66 +181,6 @@ exports.main = async (event, context) => {
     case 'unbindWeixin':
       res = await uniID.unbindWeixin(params.uid);
       break;
-    case 'loginByQQ': {
-      const {
-        code,
-        accessToken
-      } = params
-      res = await uniID.loginByQQ({
-        code,
-        accessToken
-      });
-      break;
-    }
-    case 'bindQQ': {
-      const {
-        uid,
-        code,
-        accessToken
-      } = params
-      res = await uniID.bindQQ({
-        uid,
-        code,
-        accessToken
-      });
-      break;
-    }
-    case 'unbindQQ':
-      res = await uniID.unbindQQ(params.uid);
-      break;
-    case 'code2SessionAlipay': {
-      const {
-        code
-      } = params
-      res = await uniID.code2SessionAlipay({
-        code
-      });
-      break;
-    }
-    case 'loginByAlipay': {
-      const {
-        code
-      } = params
-      res = await uniID.loginByAlipay({
-        code
-      });
-      break;
-    }
-    case 'bindAlipay': {
-      const {
-        uid,
-        code
-      } = params
-      res = await uniID.bindAlipay({
-        uid,
-        code
-      });
-      break;
-    }
-    case 'unbindAlipay': {
-      res = await uniID.unbindAlipay(params.uid);
-      break;
-    }
     case 'checkToken':
       // 注意3.0.0版本取消了checkToken接口返回的用户信息
       res = await uniID.checkToken(event.uniIdToken, {
@@ -318,17 +250,6 @@ exports.main = async (event, context) => {
       });
       break;
     }
-    case 'loginByEmail': {
-      const {
-        email,
-        code
-      } = params
-      res = await uniID.loginByEmail({
-        email,
-        code
-      });
-      break;
-    }
     case 'updateUser': {
       const {
         uid,
@@ -347,17 +268,6 @@ exports.main = async (event, context) => {
       } = params
       res = await uniID.setUserInviteCode({
         uid
-      });
-      break;
-    }
-    case 'acceptInvite': {
-      const {
-        uid,
-        inviteCode
-      } = params
-      res = await uniID.acceptInvite({
-        uid,
-        inviteCode
       });
       break;
     }

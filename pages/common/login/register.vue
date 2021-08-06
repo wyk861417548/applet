@@ -1,164 +1,74 @@
 <template>
-	<view class="content">
-		<!-- 顶部文字 -->
-		<!-- 登录框 (选择手机号所属国家和地区需要另行实现) -->
-<!-- 		<uni-forms ref="form" :value="formData" :rules="rules">
-			<uni-forms-item name="phone">
-				<uni-easyinput :disabled="lock" :focus="formData.phone.length!=11" type="number" class="easyinput" :inputBorder="false"
-					v-model="formData.phone" maxlength="11" placeholder="请输入手机号"></uni-easyinput>
+	<view class="uni-container">
+		<uni-forms ref="form" :value="formData" :rules="rules" validate-trigger="submit" err-show-type="undertext">
+			<uni-forms-item name="username" required>
+				<uni-easyinput :inputBorder="false" class="easyinput" placeholder="请输入用户名" v-model="formData.username" trim="both" />
 			</uni-forms-item>
-			<uni-forms-item name="code">
-				<uni-easyinput :focus="formData.phone.length==11" type="number" class="easyinput" :inputBorder="false"
-					v-model="formData.code" maxlength="6" placeholder="请输入验证码">
-					<template slot="right">
-						<uni-send-sms-code ref="shortCode" :phone="formData.phone"></uni-send-sms-code>
-					</template>
-				</uni-easyinput>
+			<uni-forms-item name="nickname">
+				<uni-easyinput :inputBorder="false" class="easyinput" placeholder="请输入用户昵称" v-model="formData.nickname" trim="both" />
 			</uni-forms-item>
-			<uni-forms-item name="pwd">
-				
-				<uni-easyinput type="password" class="easyinput" :inputBorder="false" v-model="formData.pwd"
-					placeholder="请输入新密码"></uni-easyinput>
+			<uni-forms-item name="password" v-model="formData.password" required>
+				<uni-easyinput :inputBorder="false" class="easyinput" placeholder="请输入6-20位密码" type="password" v-model="formData.password" trim="both" />
 			</uni-forms-item>
-			<uni-forms-item name="pwd2">
-				<uni-easyinput type="password" class="easyinput" :inputBorder="false" v-model="formData.pwd2"
-					placeholder="请确认新密码"></uni-easyinput>
+			<uni-forms-item name="pwd2" v-model="formData.pwd2" required>
+				<uni-easyinput :inputBorder="false" class="easyinput" placeholder="再次输入密码" type="password" v-model="formData.pwd2" trim="both" />
 			</uni-forms-item>
-			<button class="send-btn-box" :disabled="!canSubmit" :type="canSubmit?'primary':'default'"
-				@click="submit">完成</button>
-		</uni-forms> -->
+			<button class="send-btn" type="primary" @click="submit">注册并登录</button>
+		</uni-forms>
 	</view>
 </template>
 
 <script>
+	import rules from './common/validator.js';
 	import mixin from './common/login-page.mixin.js';
 	export default {
-		mixins: [mixin],
+		mixins:[mixin],
 		data() {
 			return {
-				lock:false,
 				formData: {
-					"phone": "",
-					'pwd': '',
-					'pwd2': ''
+					"username": "",
+					"nickname": "",
+					'password':'',
+					'pwd2':''
 				},
-				rules: {
-					phone: {
-						rules: [{
-								required: true,
-								errorMessage: '请输入手机号',
-							},
-							{
-								pattern: /^1\d{10}$/,
-								errorMessage: '手机号格式不正确',
-							}
-						]
-					},
-					code: {
-						rules: [{
-								required: true,
-								errorMessage: '请输入验证码',
-							},
-							{
-								pattern: /^.{6}$/,
-								errorMessage: '请输入6位验证码',
-							}
-						]
-					},
-					pwd: {
-						rules: [{
-								required: true,
-								errorMessage: '请输入密码',
-							},
-							{
-								pattern: /^.{6,20}$/,
-								errorMessage: '密码应为6到20位',
-							}
-						]
-					},
-					pwd2: {
-						rules: [{
-								required: true,
-								errorMessage: '请确认密码',
-							},
-							{
-								pattern: /^.{6,20}$/,
-								errorMessage: '密码应为6到20位',
-							},
-							{
-								validateFunction: function(rule, value, data, callback) {
-									// console.log(value);
-									if (value != data.pwd) {
-										callback('两次输入密码不一致')
-									};
-									return true
-								}
-							}
-						]
-					}
-				}
-			}
-		},
-		computed: {
-			canSubmit() {
-				return this.isPhone && this.isPwd && this.isCode;
-			},
-			isPhone() {
-				let reg_phone = /^1\d{10}$/;
-				let isPhone = reg_phone.test(this.formData.phone);
-				return isPhone;
-			},
-			isPwd() {
-				let reg_pwd = /^.{6,20}$/;
-				let isPwd = reg_pwd.test(this.formData.pwd);
-				return isPwd;
-			},
-			isCode() {
-				let reg_code = /^\d{6}$/;
-				let isCode = reg_code.test(this.formData.code);
-				return isCode;
-			}
-		},
-		onLoad(event) {
-			if (event && event.phoneNumber) {
-				this.formData.phone = event.phoneNumber;
-				this.lock = true
+				rules,
+				agree:false
 			}
 		},
 		onReady() {
-			if (this.formData.phone) {
-				this.$refs.shortCode.start();
-			}
+			this.$refs.form.setRules(this.rules)
 		},
 		methods: {
 			/**
-			 * 完成并提交
+			 * 触发表单提交
 			 */
 			submit() {
-				this.$refs.form.submit()
-					.then(res => {
-						uniCloud.callFunction({
-							name:'uni-id-cf',
-							data:{
-								action:'resetPwdBySmsCode',
-								params:{
-									"mobile": this.formData.phone,
-									"code": this.formData.code,
-									"password": this.formData.pwd
-								},
-							},
-							success: ({result}) => {
-								console.log(result);
-								uni.showToast({
-									title: result.msg,
-									icon: 'none'
-								});
-								if (result.code === 0) {
-									uni.navigateBack()
-								}
-							}
-						})
+				
+				uni.showLoading({
+					mask: true
+				})
+				this.$refs.form.submit().then((res) => {
+						console.log("submit",res);
+						this.submitForm(res)
+					}).catch((errors) => {
+						console.log(errors);
 					})
+					.finally(() => {
+						uni.hideLoading()
+					})
+			},
+			
+			
+			submitForm(params) {
+				let data = {
+					action:"register",
+					params:params
+				}
+				
+				this.$cloud.cloudFn(data).then(res=>{
+					console.log("register",res);
+					this.loginSuccess(res)
+				})
 			}
 		}
 	}
@@ -166,8 +76,10 @@
 
 <style>
 	@import url("./common/login-page.css");
-
-	.content{
-		padding-top: 36rpx;
+	.uni-container {
+		padding: 15px;
+	}
+	.send-btn{
+		margin-top: 5px;
 	}
 </style>

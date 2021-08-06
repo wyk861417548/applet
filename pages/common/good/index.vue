@@ -121,7 +121,7 @@
 		
 		<!-- 自定义tabBar组件 -->
 		<view class="" style="height: 100rpx;">
-			<uni-tabs></uni-tabs>
+			<um-tabs></um-tabs>
 		</view>
 	</view>
 </template>

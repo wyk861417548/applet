@@ -20,7 +20,5 @@
 	// 注意引入外部scss 这样写
 	@import "@/static/css/app.scss";
 	
-	page{
-		background-color: #ededed;
-	}
+	
 </style>

@@ -41,7 +41,7 @@
 		
 		<!-- 自定义tabBar组件 -->
 		<view class="" style="height: 100rpx;">
-			<uni-tabs></uni-tabs>
+			<um-tabs></um-tabs>
 		</view>
 	</view>
 </template>
@@ -54,11 +54,20 @@
 				show:true
 			}
 		},
-		onLoad() {
-			
+		onShow() {
+			this.getUserInfo();
 		},
 		methods: {
-			
+			getUserInfo(){
+				let data = {
+					action:"getUserInfo"
+				}
+				
+				this.$cloud.cloudFn(data).then(res=>{
+					// this.loginSuccess(res)
+					console.log("res",res);
+				});
+			}
 		}
 	}
 </script>
