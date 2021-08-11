@@ -7,20 +7,21 @@
 				<view>请选择</view>
 				<view class="header-right" @tap="confirm">确定</view>
 			</view>
-
+			
 			<slot>
 				<picker-view :value="value" :indicator-style="indicatorStyle" @change="bindChange" class="picker-view">
 					<picker-view-column>
-						<view class="item" v-for="(item,index) in picker" :key="index">{{item.name}}</view>
+						<view class="item" v-for="(item,index) in picker" :key="index">{{item.value}}</view>
 					</picker-view-column>
-					<picker-view-column v-show="picker[value[0]].child">
-						<view class="item" v-for="(item,index) in picker[value[0]].child" :key="index">{{item.name}}</view>
+					<picker-view-column v-show="picker[value[0]].childs">
+						<view class="item" v-for="(item,index) in picker[value[0]].childs" :key="index">{{item.value}}</view>
 					</picker-view-column>
-					<picker-view-column v-show="picker[value[0]].child[value[1]].child">
-						<view class="item" v-for="(item,index) in picker[value[0]].child[value[1]].child" :key="index">{{item.name}}</view>
+					<picker-view-column v-show="picker[value[0]].childs[value[1]].childs">
+						<view class="item" v-for="(item,index) in picker[value[0]].childs[value[1]].childs" :key="index">{{item.value}}</view>
 					</picker-view-column>
 				</picker-view>
 			</slot>
+			
 		</view>
 	</view>
 </template>

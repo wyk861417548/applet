@@ -7,7 +7,12 @@ const store = new Vuex.Store({
 	modules: {
 		user
 	},
-	strict: true
+	strict: true,
+	
+	
+	state:{
+		user:"nihao"
+	}
 })
 
 export default store

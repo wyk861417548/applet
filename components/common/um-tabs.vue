@@ -10,6 +10,7 @@
 </template>
 
 <script>
+	import { mapGetters } from 'vuex'
 	export default {
 		data() {
 			return {
@@ -18,7 +19,7 @@
 				list:[],
 				
 				// 身份
-				type:"admin",
+				type:"user",
 				// type:"user",
 				
 				tabBar: {
@@ -30,32 +31,49 @@
 					],
 					
 					// 代理商身份
-					admin:[
+					admins:[
 						{name:"商品",icon:"icon-shouye",url:"/pages/common/good/index"},
 						{name:"我的",icon:"icon-dilanxianxingiconyihuifu_huabanfuben",url:"/pages/common/mine/index"}
 					]
 				}
 			};
 		},
+		
+		computed: {
+			...mapGetters({
+				'userInfo': 'user/info'
+			})
+		},
+		
 		beforeCreate() {
 			uni.hideTabBar();
 		},
 		
 		created() {
+			this.setTab();
 			// 获取当前url地址
 			this.current = this.$config.getRouter();
 			
-			this.list = this.tabBar[this.type];
 		},
 		activated() {
-			console.log("activated");
 			// 获取当前url地址
 			this.current = this.$config.getRouter();
-			
 		},
 		methods:{
 			changeTab(index){
 				this.$emit("change",index)
+			},
+			
+			setTab(){
+				var role =  this.userInfo.role;
+				
+				console.log("setTab",role);
+
+				if(role == 'admins'){
+					this.list = this.tabBar[role];
+				}else{
+					this.list = this.tabBar[this.type];
+				}
 			}
 		}
 	}

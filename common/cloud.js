@@ -7,6 +7,29 @@
  * 		params:请求参数
  * 		fail:错误消息
  */
+
+// 其他错误  以及token过期处理
+function handle(res){
+	// 未登录  或者token过期
+	let code = [30203,30202,403];
+	
+	if(code.indexOf(res.code) !== -1 ){
+		var content = '抱歉由于您未登录或者登录状态过期，请重新授权登录';
+		uni.showModal({
+		    title: '提示',
+		    content: content,
+				showCancel:false,
+		    success: function (res) {
+					if (res.confirm) {
+						uni.navigateTo({url:"/pages/common/login/login"})
+					}
+		    }
+		});
+		return;
+	}
+	uni.showToast({title:res.message?res.message:"请稍后再试",icon:"none"})
+  
+}
 // 用于记录同时发送请求次数，用于处理
 let ajaxTimes = 0;
 
@@ -30,8 +53,9 @@ export default  {
 					let data = res.result;
 					if(data.code == 0){
 						resolve(data);
+					}else{
+						handle(data)
 					}
-					uni.showToast({title:data.message?data.message:"请稍后再试",icon:"none"})
 				},
 				
 				fail(e) {

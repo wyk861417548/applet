@@ -5,13 +5,6 @@
 	},
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-			"path": "pages/common/index",
-			"style": {
-				"navigationBarTitleText": "",
-				"enablePullDownRefresh": false
-			}
-		},
-		{
 			"path": "pages/common/mine/index",
 			"style": {
 				"navigationBarTitleText": "我的"
@@ -27,22 +20,50 @@
 				"navigationBarTitleText": "",
 				"enablePullDownRefresh": false
 			}
-		},{
+		}, {
 			"path": "pages/user/order/order",
 			"style": {
 				"navigationBarTitleText": "订单",
 				"enablePullDownRefresh": false
 			}
 
+		}, {
+			"path": "pages/common/login/register",
+			"style": {
+				"navigationBarTitleText": "注册",
+				"enablePullDownRefresh": false
+			}
+		}, {
+			"path": "pages/common/mine/address/index",
+			"style": {
+				"navigationBarTitleText": "",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/common/mine/address/modify",
+			"style": {
+				"navigationBarTitleText": "修改",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/common/mine/setting/index",
+			"style": {
+				"navigationBarTitleText": "设置",
+				"enablePullDownRefresh": false
+			}
+
 		}
 	    ,{
-				"path" : "pages/common/login/register",
-				"style" :                                                                                    
-				{
-					"navigationBarTitleText": "注册",
-					"enablePullDownRefresh": false
-				}   
-      }
+            "path" : "pages/common/mine/info/index",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "个人信息",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
@@ -51,32 +72,25 @@
 		"backgroundColor": "#F8F8F8"
 	},
 	"tabBar": {
-		"color": "#919293",
-		"selectedColor": "#97AF13",
+		"color": "#fff",
+		"selectedColor": "#fff",
+		"borderStyle": "white",
 		"backgroundColor": "#fff",
-		"borderStyle": "black",
 		"list": [
 			// 公告模块
 			{
 				"pagePath": "pages/common/mine/index",
 				"text": "我的"
-			},{
+			}, {
 				"pagePath": "pages/common/good/index",
 				"text": "商品"
 			},
-			
 			// 用户模块
-			
 			{
 				"pagePath": "pages/user/order/order",
-				"text": "订单",
-				"iconPath": "static/images/tabBar/drink.png",
-				"selectedIconPath": "static/images/tabBar/drink_selected.png"
+				"text": "订单"
 			}
-			
-			
-			// 管理员
-			
+
 		]
 	}
 }

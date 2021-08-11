@@ -28,7 +28,7 @@ export default{
 	//日期格式转换
 	dateformat(date,fmt){
 		let _date = date ? date : new Date();
-		
+		console.log("data",date);
 		let cNumber=["日","一","二","三","四","五","六"];
 		
 		let o = {

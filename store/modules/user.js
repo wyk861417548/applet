@@ -18,13 +18,15 @@ let state = {
 		login(state, info) { //登录成功后的操作
 			//原有的结合传来的参数
 			let _info = state.info;
-			state.info = Object.assign({}, _info, info);
+			
+			state.info = Object.assign({}, _info, info.userInfo);
+			
 			//设置为已经登录
 			state.hasLogin = true;
 			//存储最新的用户数据到本地持久化存储
-			uni.setStorageSync('userInfo', state.info.userInfo);
-			uni.setStorageSync('uni_id_token', state.info.token)
-			uni.setStorageSync('uni_id_token_expired', state.info.tokenExpired)
+			uni.setStorageSync('userInfo', info.userInfo);
+			uni.setStorageSync('uni_id_token', info.token)
+			uni.setStorageSync('uni_id_token_expired', info.tokenExpired)
 			
 		},
 		logout(state) {

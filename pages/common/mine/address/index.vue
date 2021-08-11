@@ -1,0 +1,121 @@
+<template>
+  <!-- j-full-curbox 当前元素占满全屏  j-flex-col flex垂直布局 -->
+  <view>
+    <view v-if="dataList.length > 0" class="container">
+			<radio-group>
+				<view v-for="(item,index) in dataList" :key="index" class="list">
+					<view class="pb-10 content">
+						<view style="font-weight: bold;">{{item.province}}{{item.city}}{{item.district}}</view>
+						<view class="mt-10">
+							<text class="mr-15 pb-10">{{item.realName}}</text>
+							<text class="col999">{{item.phone}}</text>
+						</view>
+					</view>
+
+					<view class="pt-10 font14 col5A5 j-flex">
+						<label @tap="setDefault(item.id)"><radio  :checked="item.isDefault == true" /><text>设置默认地址</text></label>
+						<view class="pr-20">
+							<text class="mr-10 iconfont iconxiugai col108" @tap="$skip" :data-url="'/pages/store/my/address/modify?id='+item.id">编辑</text>
+							<text class="iconfont iconxiugai col108" @tap="handleConfim(item.id)">删除</text>
+						</view>
+					</view>
+					
+					<view class="mt-20" style="height: 4rpx;background:rgba(221,221,221,.5);"></view>
+				</view>
+				
+			</radio-group>
+ 
+    </view>
+		
+		<view class="footer j-flex font14 mt-20 mr-15" @tap="$skip" data-url="/pages/common/mine/address/modify">
+			<view class="">新增地址</view>
+			<view class="iconfont icon-youjiantou" style="font-size: 24rpx;"></view>
+		</view>
+		
+		<view style="height: 20rpx;background:rgba(221,221,221,.5);"></view>
+
+
+  
+  </view>
+  
+</template>
+<script>
+
+export default {
+  data () {
+    return {
+			
+      dataList:[],
+			
+      data:{
+				page: 1,
+				limit: 20
+			},
+			
+			select:""
+    };
+  },
+	onShow() {
+		// this.getData();
+	},
+
+	
+  methods:{
+    //获取地址列表
+    getData(){
+      this.$get(this.$api.my.address.list,this.data).then((res) => {
+        this.dataList = res.data.list;
+      });
+    },
+		
+    //设置默认地址
+    setDefault(id){
+      console.log("data",id);
+      this.$post(this.$api.my.address.setdefalut,{id:id}).then((res) => {
+				uni.navigateBack();
+			});
+    },
+		
+		handleConfim(id){
+			uni.showModal({
+			  content: '是否删除地址',
+				confirmColor: '#DBA871',
+				success: res => {
+					if (res.confirm) {
+						this.show = false;
+						this.handleDel(id);
+					}
+				}
+			})
+		},
+		
+		handleTip(){
+			uni.showToast({title:"功能开发中，请等待",icon:"none"})
+		},
+		
+		// 删除地址
+		handleDel(id){
+			this.$post(this.$api.my.address.del,{id:id}).then(res=>{
+				this.getData();
+			})
+		}
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+  .container{
+		padding-left:40rpx;
+		.list{
+			padding:20rpx 0;
+			.content{
+				border-bottom: 2rpx solid rgba(238,238,238,.5);
+			}
+		}
+	}
+	.footer{
+		padding-left:40rpx;
+		margin-bottom: 40rpx;
+		color: #108EE9;
+	}
+</style>

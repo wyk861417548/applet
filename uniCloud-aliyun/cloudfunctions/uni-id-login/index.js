@@ -45,13 +45,15 @@ exports.main = async (event, context) => {
         msg: '缺少token'
       }
     }
-		let payload = await uniID.checkToken(event.uniIdToken)
+		
+		payload = await uniID.checkToken(event.uniIdToken)
+		
+		console.log("payload",payload);
+		
 		if (payload.code && payload.code > 0) {
 			return payload
 		}
     
-		console.log("payload",payload);
-		
     params.uid = payload.uid
   }
 	

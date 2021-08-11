@@ -3,9 +3,16 @@
 		<!-- 账号密码 -->
 		<view class="title mb-15 font22">欢迎登录</view>
 		
-		<input type="number" maxlength="11" v-model="data.username" placeholder="输入手机号码"/>
+		<view class="menu flex">
+			<view class="menu-title">账号</view>
+			<input type="text" v-model="data.username" placeholder="请输入账号"/>
+		</view>
 		
-		<input class="mt-20 mb-15" type="password" v-model="data.password" placeholder="密码"/>
+		<view class="menu flex">
+			<view class="menu-title">密码</view>
+			<input type="password"  v-model="data.password" maxlength="11" placeholder="请输入密码"/>
+		</view>
+		
 		
 		<button type="primary" @tap="login">登录</button>
 		
@@ -68,6 +75,25 @@
 	.iconfont{
 		font-size: 36rpx !important;
 		color:#a8d458;
+	}
+	.menu{
+		padding:20rpx 60rpx 20rpx 0;
+		align-items: center;
+		border-bottom: 2rpx solid rgba(238,238,238,.5);
+		margin-left: 30rpx;
+		.avatar{
+			width: 100rpx;
+			height: 100rpx;
+			border-radius: 50%;
+			overflow: hidden;
+		}
+		.menu-title{
+			font-weight:bold;
+			width: 200rpx;
+			height: 100%;
+			padding:20rpx 0;
+			margin-left: 20rpx;
+		}
 	}
 	.container{
 		.content{
