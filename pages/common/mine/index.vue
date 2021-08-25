@@ -23,8 +23,6 @@
 				</u-cell-group>
 			</view>
 			
-			<button type="default" class="mt-20" @click="quit">退出登录</button>
-			
 		</view>
 		
 		<!-- 自定义tabBar组件 -->
@@ -35,7 +33,7 @@
 </template>
 
 <script>
-	import {mapMutations,mapGetters} from 'vuex';
+	import {mapGetters} from 'vuex';
 	export default {
 		data() {
 			return {
@@ -52,9 +50,11 @@
 				]
 			}
 		},
+		
 		onShow() {
 			
 		},
+		
 		computed: {
 			...mapGetters({
 				'userInfo': 'user/info',
@@ -62,45 +62,10 @@
 			})
 		},
 		methods: {
-			...mapMutations({
-				logout: 'user/logout'
-			}),
-			
 			// 功能列表跳转
 			skip(url){
 				uni.navigateTo({url})
 			},
-			
-		
-			// 退出登录弹窗
-			quit(){
-				console.log("this.hasLogin",this.hasLogin);
-				if(this.hasLogin){
-					uni.showModal({
-					  content: '退出登录后不能查看订单信息',
-						confirmColor: '#DBA871',
-						success: res => {
-							if (res.confirm) {
-								this.handleQuit();
-							}
-						}
-					})
-				}else{
-					this.skip(this.loginUrl)
-				}
-				
-			},
-			
-			// 退出登录
-			handleQuit(){
-				let data = {
-					action:"logout"
-				}
-				this.$cloud.cloudFn(data).then(res=>{
-					// 清除vuex保存的登录信息
-					this.logout();
-				});
-			}
 		}
 	}
 </script>

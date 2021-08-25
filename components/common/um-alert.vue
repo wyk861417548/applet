@@ -1,18 +1,18 @@
 <template>
-  <div v-show="show" class="my-mask">
-    <div class="my-dialog" :style="styles">
-      <div class="my-dialog-container">
+  <view v-show="show" class="my-mask">
+    <view class="my-dialog" :style="styles">
+      <view class="my-dialog-container">
          <slot name="container">
           内容
          </slot>
-      </div>
-      <div class="my-dialog-footer">
+      </view>
+      <view class="my-dialog-footer">
 				<slot name="footer">
 					<view class="col108" @click="confirm">确定</view>
 				</slot>
-      </div>
-    </div>
-  </div>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script>
@@ -84,7 +84,7 @@ export default {
 					height: 60rpx;
         }
       }
-      & > div{
+      & > view{
         padding:14px 16px;
       }
     }

@@ -32,7 +32,7 @@
 					
 					// 代理商身份
 					admins:[
-						{name:"商品",icon:"icon-shouye",url:"/pages/common/good/index"},
+						{name:"商品管理",icon:"icon-shouye",url:"/pages/admin/good/index"},
 						{name:"我的",icon:"icon-dilanxianxingiconyihuifu_huabanfuben",url:"/pages/common/mine/index"}
 					]
 				}

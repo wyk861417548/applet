@@ -2,7 +2,7 @@
 	<view class="j-full-curbox" style="overflow: hidden;">
 		<view class="menu flex">
 			<view class="menu-title">姓名</view>
-			<input type="text" v-model="form.realName" placeholder="请输入姓名"/>
+			<input type="text" v-model="form.name" placeholder="请输入姓名"/>
 		</view>
 		
 		<view class="menu flex">
@@ -43,13 +43,14 @@
 			return {
 				show:true,
 				
+				// 当前地址的唯一标识id
+				id:"",
+				
 				// picker 组件数据
 				picker:[],
 				
 				// 提交表单
 				form:{
-					// 地址信息
-					address:{},
 					
 					// 联动选择 地址
 					area:"",
@@ -62,12 +63,12 @@
 					
 					phone:"",
 					
-					realName:""
+					name:""
 				},
 				
 				// 表单验证规则
 				rules:{
-					realName:{datatype:"Require",msg:"请填写姓名"},
+					name:{datatype:"Require",msg:"请填写姓名"},
 					
 					phone:{datatype:"Phone",msg:"请填写手机号码"},
 					
@@ -84,10 +85,10 @@
 		onLoad(param) {
 			this.picker = city_code;
 			
-			return;
 			if(param.id){
 				this.show = false;
-				this.getAddressDetail(param.id);
+				this.id = param.id;
+				this.getAddressDetail();
 			}
 			
 		},
@@ -100,14 +101,20 @@
 		
 		methods:{
 			// 新增地址
-			addStore(){
+			async addStore(){
 				//表单验证
 				if(!this.$validator.validate(this.form,this.rules)) return;
+			
+				let data = {
+					action:"setAddress",
+					params: this.form
+				}
 				
-				this.$post(this.$api.my.address.edit,this.form).then(res=>{
+				this.$cloud.cloudFn(data).then(res=>{
 					uni.showToast({title:"新增成功",icon:"none"})
 					uni.navigateBack()
-				})
+				});
+				
 			},
 			
 			// 选择框状态改变
@@ -122,32 +129,39 @@
 			
 			// 修改地址
 			editStore(){
-				this.$post(this.$api.my.address.edit,this.form).then(res=>{
+				if(!this.$validator.validate(this.form,this.rules)) return;
+				
+				let data = {
+					action:"updateAddress",
+					params:this.form,
+					// 查询索引
+					_id:this.id
+				}
+		
+				this.$cloud.cloudFn(data).then(res=>{
 					uni.showToast({title:"修改成功",icon:"none"})
-					uni.navigateBack()
-				})
+				});
 			},
 			
 			// 获取地址详情
-			getAddressDetail(id){
-				this.$get(this.$api.my.address.detail+id).then(res=>{
-					var data = res.data;
-					console.log("this.form.area",this.form.area);
+			getAddressDetail(){
+				let data = {
+					action:"getAddress",
+					params:{
+						_id:this.id
+					}
+				}
+				this.$cloud.cloudFn(data).then(res=>{
+					let data =res.data[0];
+		
 					this.form = {
-						address:{
-							province:data.province,
-							city:data.city,
-							district:data.district,
-							cityId:data.cityId
-						},
-						area:[data.province,data.city,data.district].join('/'),
-						id:data.id,
+						area:data.area,
 						detail:data.detail,
 						isDefault: data.isDefault,
 						phone:data.phone,
-						realName:data.realName
+						name:data.name
 					}
-				})
+				});
 			},
 			
 			// 获取地址栏三级联动信息
@@ -197,8 +211,6 @@
 				}
 			
 				this.form.area = cityArr.join('/')
-				
-				this.form.address = obj;
 				
 			}
 			

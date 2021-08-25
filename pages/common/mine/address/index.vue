@@ -5,7 +5,7 @@
 			<radio-group>
 				<view v-for="(item,index) in dataList" :key="index" class="list">
 					<view class="pb-10 content">
-						<view style="font-weight: bold;">{{item.province}}{{item.city}}{{item.district}}</view>
+						<view style="font-weight: bold;">{{item.area}}</view>
 						<view class="mt-10">
 							<text class="mr-15 pb-10">{{item.realName}}</text>
 							<text class="col999">{{item.phone}}</text>
@@ -13,10 +13,10 @@
 					</view>
 
 					<view class="pt-10 font14 col5A5 j-flex">
-						<label @tap="setDefault(item.id)"><radio  :checked="item.isDefault == true" /><text>设置默认地址</text></label>
+						<label @tap="setDefault(item._id)"><radio  :checked="item.isDefault == true" /><text>设置默认地址</text></label>
 						<view class="pr-20">
-							<text class="mr-10 iconfont iconxiugai col108" @tap="$skip" :data-url="'/pages/store/my/address/modify?id='+item.id">编辑</text>
-							<text class="iconfont iconxiugai col108" @tap="handleConfim(item.id)">删除</text>
+							<text class="mr-10 iconfont iconxiugai col108" @tap="$skip" :data-url="'/pages/common/mine/address/modify?id='+item._id">编辑</text>
+							<text class="iconfont iconxiugai col108" @tap="handleConfim(item._id)">删除</text>
 						</view>
 					</view>
 					
@@ -56,26 +56,34 @@ export default {
     };
   },
 	onShow() {
-		// this.getData();
+		this.getData();
 	},
 
 	
   methods:{
     //获取地址列表
     getData(){
-      this.$get(this.$api.my.address.list,this.data).then((res) => {
-        this.dataList = res.data.list;
+      let data = {
+      	action:"getAddress"
+      }
+      this.$cloud.cloudFn(data).then(res=>{
+      	this.dataList = res.data;
       });
     },
 		
     //设置默认地址
     setDefault(id){
-      console.log("data",id);
-      this.$post(this.$api.my.address.setdefalut,{id:id}).then((res) => {
-				uni.navigateBack();
+			let data = {
+				action:"setDefalutAddress",
+				// 查询索引
+				_id:id
+			}
+			this.$cloud.cloudFn(data).then(res=>{
+				uni.showToast({title:"设置成功",icon:"none"})
 			});
     },
 		
+		// 确认是否删除地址弹窗
 		handleConfim(id){
 			uni.showModal({
 			  content: '是否删除地址',
@@ -95,9 +103,22 @@ export default {
 		
 		// 删除地址
 		handleDel(id){
-			this.$post(this.$api.my.address.del,{id:id}).then(res=>{
-				this.getData();
-			})
+			let data = {
+				action:"removeAddress",
+				// 查询索引
+				_id:id
+			}
+					
+			this.$cloud.cloudFn(data).then(res=>{
+				uni.showToast({title:"删除成功",icon:"none"})
+				this.dataList.map((item,index)=>{
+					if(item._id == id){
+						this.dataList.splice(index,1)
+						return;
+					}
+				})
+				
+			});
 		}
   },
 };

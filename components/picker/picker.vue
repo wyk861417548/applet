@@ -46,8 +46,6 @@
 		onShow() {
 		},
 		computed:{
-			goodCartNum() {	//计算单个饮品添加到购物车的数量
-			},
 		},
 		methods: {
 			

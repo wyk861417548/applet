@@ -1,6 +1,7 @@
 'use strict';
 
-let uniID = require('uni-id')
+let uniID = require('uni-id');
+const db = uniCloud.database();
 exports.main = async (event, context) => {
   uniID = uniID.createInstance({
     context
@@ -32,6 +33,9 @@ exports.main = async (event, context) => {
 	
   let payload = {}
 	
+	// 返回正确的code
+	let code = {code:0}
+	
 	
 	// 这些请求是不需要token的
   let noCheckAction = ['register', 'checkToken', 'encryptPwd', 'login', 'loginByWeixin', 'sendSmsCode',
@@ -59,8 +63,10 @@ exports.main = async (event, context) => {
 	
 	console.log("uid",params);
   let res = {}
+	
 
   switch (event.action) {
+		// 注冊
     case 'register': {
       const {
         username,
@@ -75,6 +81,7 @@ exports.main = async (event, context) => {
       });
       break;
     }
+		// 登录
     case 'login': {
       const {
         username,
@@ -91,22 +98,11 @@ exports.main = async (event, context) => {
       });
       break;
     }
+		// 退出登录
     case 'logout':
       res = await uniID.logout(event.uniIdToken);
       break;
-    case 'updatePwd': {
-      const {
-        uid,
-        oldPassword,
-        newPassword
-      } = params
-      res = await uniID.updatePwd({
-        uid,
-        oldPassword,
-        newPassword
-      });
-      break;
-    }
+		// 获取用户信息
 		case 'getUserInfo': {
 		  const {uid} = params
 		  res = await uniID.getUserInfo({
@@ -114,6 +110,94 @@ exports.main = async (event, context) => {
 		  });
 		  break;
 		}
+		// 新增地址
+		case "setAddress":{
+			// 每次新增地址 把其他的默认地址设置非默认地址
+			await db.collection('address').where({isDefault:true,uid:params.uid}).update({isDefault:false})
+			await db.collection('address').add(params).then((json)=>{
+				if(json.id){
+					res = code
+				}
+			})
+			break;
+		}
+		// 设置默认地址
+		case "setDefalutAddress":{
+			// 每次设置默认地址 把其他的默认地址设置非默认地址
+			await db.collection('address').where({isDefault:true,uid:params.uid}).update({isDefault:false})
+			await db.collection('address').doc(event._id).update({isDefault:true}).then(json=>{
+				res = Object.assign(code,json)
+			});
+			break;
+		}
+		
+		// 获取地址 根据条件不同 获取多个或者单个
+		case "getAddress":{
+			await db.collection('address').where(params).get().then(json=>{
+				res = Object.assign(code,json)
+			});
+			break;
+		}
+		// 更新地址
+		case "updateAddress":{
+			await db.collection('address').doc(event._id).update(params).then(json=>{
+				res = Object.assign(code,json)
+			});
+			break;
+		}
+		// 删除地址
+		case "removeAddress":{
+			await db.collection('address').doc(event._id).remove().then(json=>{
+				res = Object.assign(code,json)
+			});
+			break;
+		}
+		// 新增商品类别
+		case "addCategory":{
+			await db.collection('good').add(params).then((json)=>{
+				if(json.id){
+					res = code
+				}
+			})
+			break;
+		}
+		// 获取商品类别
+		case "getCategory":{
+			await db.collection('good').get().then((json)=>{
+				console.log("json",json);
+				res = Object.assign(code,json)
+			})
+			break;
+		}
+		// 新增商品类别
+		case "removeCategory":{
+			
+		}
+		
+		// 新增商品
+		case "addGood":{
+			await db.collection('good').doc(event._id).update(params).then((json)=>{
+				if(json.id){
+					res = code
+				}
+			})
+			break;
+		}
+		
+		case 'updatePwd': {
+		  const {
+		    uid,
+		    oldPassword,
+		    newPassword
+		  } = params
+		  res = await uniID.updatePwd({
+		    uid,
+		    oldPassword,
+		    newPassword
+		  });
+		  break;
+		}
+		
     case 'setAvatar': {
       const {
         uid,
@@ -125,6 +209,7 @@ exports.main = async (event, context) => {
       });
       break;
     }
+		
     case 'bindMobile': {
       const {
         uid,
@@ -138,6 +223,7 @@ exports.main = async (event, context) => {
       });
       break;
     }
+		
     case 'unbindMobile': {
       const {
         uid,
@@ -151,6 +237,7 @@ exports.main = async (event, context) => {
       });
       break;
     }
+		
     case 'code2SessionWeixin': {
       const {
         code
@@ -252,6 +339,7 @@ exports.main = async (event, context) => {
       });
       break;
     }
+		// 更新用户信息
     case 'updateUser': {
       const {
         uid,

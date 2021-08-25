@@ -3,7 +3,7 @@
 	padding:40rpx 20rpx;
 	background-color: #fff;
 	border-radius: 10rpx;
-	margin: 0 18rpx 18rpx 18rpx;
+	margin: 20rpx 0;
 	// 盒子标题
 	.box-title{
 		margin-bottom:15rpx;
@@ -20,6 +20,19 @@
 		.menu-content{
 			color:#999;
 		}
+	}
+	 // 用于每列信息展示   左边信息名称   右边信息
+	.column{
+		display: flex;
+		justify-content: space-between;
+		padding:20rpx;
+		.left{
+			color:#A1A1A1;
+		}
+		.right{
+			color: #333;
+		}
+		
 	}
 }
 	

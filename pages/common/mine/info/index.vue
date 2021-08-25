@@ -63,10 +63,12 @@
 
 <script>
 	import defaultaAvatar from "@/static/images/avatar.webp"
-	import {mapGetters} from 'vuex';
+	import {mapMutations,mapGetters} from 'vuex';
 	export default {
 		data() {
 			return {
+				loginUrl:"/pages/common/login/login",
+				
 				// 默认头像
 				defaultaAvatar:"",
 				
@@ -87,11 +89,14 @@
 		},
 		computed: {
 			...mapGetters({
-				'userInfo': 'user/info'
+				'userInfo': 'user/info',
+				'hasLogin': 'user/hasLogin',
 			})
 		},
-		methods:{
-			// 获取用户信息
+		methods: {
+			...mapMutations({
+				logout: 'user/logout'
+			}),
 			
 			// 保存修改
 			save(){
@@ -108,26 +113,43 @@
 				})
 			},
 			
-			// 退出登录
-			quit(){
-				uni.showModal({
-				  content: '是否退出登录',
-					confirmColor: '#DBA871',
-					success: res => {
-						if (res.confirm) {
-							this.handleQuit();
-						}
-					}
-				})
+			// 功能列表跳转
+			skip(url){
+				uni.navigateTo({url})
 			},
 			
+					
+			// 退出登录弹窗
+			quit(){
+				console.log("this.hasLogin",this.hasLogin);
+				if(this.hasLogin){
+					uni.showModal({
+					  content: '退出登录后不能查看订单信息',
+						confirmColor: '#DBA871',
+						success: res => {
+							if (res.confirm) {
+								this.handleQuit();
+							}
+						}
+					})
+				}else{
+					this.skip(this.loginUrl)
+				}
+				
+			},
 			
 			// 退出登录
 			handleQuit(){
-				this.$get(this.$api.sign.quit).then(res=>{
-					this.$store.commit("userRegister");
-				})
+				let data = {
+					action:"logout"
+				}
+				this.$cloud.cloudFn(data).then(res=>{
+					// 清除vuex保存的登录信息
+					this.logout();
+					uni.navigateBack()
+				});
 			}
+			
 		}
 	}
 </script>

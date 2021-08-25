@@ -46,10 +46,12 @@ export default  {
 				data: {
 					action: data.action,
 					params: data.params,
-					uniIdToken:uni.getStorageSync('uni_id_token')
+					uniIdToken:uni.getStorageSync('uni_id_token'),
+					_id:data._id
 				},
 				
 				success(res) {
+					console.log("success",res);
 					let data = res.result;
 					if(data.code == 0){
 						resolve(data);
