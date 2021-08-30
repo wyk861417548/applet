@@ -163,23 +163,25 @@ exports.main = async (event, context) => {
 		}
 		// 获取商品类别
 		case "getCategory":{
+			console.log("action",event);
 			await db.collection('good').get().then((json)=>{
 				console.log("json",json);
 				res = Object.assign(code,json)
 			})
 			break;
 		}
-		// 新增商品类别
+		// 删除商品类别
 		case "removeCategory":{
 			
 		}
 		
 		// 新增商品
 		case "addGood":{
-			await db.collection('good').doc(event._id).update(params).then((json)=>{
-				if(json.id){
-					res = code
-				}
+			await db.collection('good').doc(event._id).update({
+				child:db.command.push([params])
+			}).then((json)=>{
+				console.log("json",json);
+				res = Object.assign(code,json)
 			})
 			break;
 		}

@@ -5,7 +5,7 @@
 		<view class="flex container" style="flex:1;background-color: #108EE9;">
 			<!-- :scroll-top="verticalNavTop" -->
 			<scroll-view class="left" :scroll-with-animation='true'>
-				<view  @click="showTip"> 新增商品类别</view>
+				<view  @click="showTip"> 新增类别</view>
 				
 				<view class="menu" :id="`menu-${item.id}`" v-for="(item, index) in goods" :key="index" :class="{'current': item.id == currentIndex}"  @tap="handleMenuTap(item.id)">
 					<text>{{ item.name }}</text>
@@ -21,20 +21,20 @@
 					<!-- 商品类别 -->
 					<view class="title">
 						<text v-if="index == 0"></text>
-						<text v-if="index != 0">{{category.name }}{{category.child.length}}</text>
+						<text v-if="index != 0">{{category.name }}</text>
 					</view>
-					{{category.child}}
+				
 					<!-- 商品循环 -->
 					<view class="good" v-for="(product, key) in category.child" :key="key">
 						<view class="" style="height: 20rpx;"></view>
 						<view class="flex">
-							<view class="image" :style="{background:'url('+product.image+') no-repeat center / cover;'}" @tap='$skip' :data-url="'/pages/store/stock/goodDetail?id='+product.id"></view>
+							<view class="image" :style="{background:'url('+product.img[0]+') no-repeat center / cover;'}" @tap='$skip' :data-url="'/pages/store/stock/goodDetail?id='+product.id"></view>
 											
 							<view class="right">
 								<!-- 商品名称 -->
-								<view>{{ product.storeName }}</view>
+								<view>{{ product.name }}</view>
 								<!-- 商品描述 -->
-								<text class="tips text-overflowMut">{{ product.content }}</text>
+								<text class="tips text-overflowMut">{{ product.introduct }}</text>
 								
 								<view class="price_and_action j-flex" style="width: 100%;">
 									<text class="price colfc4">￥{{ product.price }}</text>
@@ -161,6 +161,16 @@
 			width: 30%;
 			background-color: #fff;
 			border-right: 2rpx solid rgba(221,221,221,.3);
+			& view{
+				text-align: center;
+			}
+		}
+		.right{
+			.image{
+				width:80rpx;
+				height: 80rpx;
+			}
+			
 		}
 	}
 </style>

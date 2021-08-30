@@ -39,9 +39,11 @@
 			<view class="box-title">请上传商品图片</view>
 			
 			<view style="text-align: center;">
-				<upload style="display: inline-block; margin: auto;"></upload>
+				<upload style="display: inline-block; margin: auto;" @change="changeImg"></upload>
 			</view>
 		</view>
+		
+		<button type="default" @click="addGood">新增</button>
 		
 	</view>
 </template>
@@ -95,10 +97,9 @@
 		},
 		methods: {
 			// 获取商品类别
-			// 获取商品类别
 			getCategory(){
 				let data = {
-					action:"getCategory"
+					action:"getCategory",
 				}
 				
 				this.$cloud.cloudFn(data).then(res=>{
@@ -116,6 +117,19 @@
 				});
 			},
 			
+			// 新增商品
+			addGood(){
+				let data = {
+					action:"addGood",
+					_id:this.selCategory._id,
+					params:this.data
+				}
+				
+				this.$cloud.cloudFn(data).then(res=>{
+					uni.showToast({title:"添加成功",icon:"none"})
+				});
+			},
+			
 			// 选中商品类别
 			confirm(e) {
 				console.log("e",e);
@@ -123,6 +137,12 @@
 					name:e[0].label,
 					_id:e[0].value
 				} 
+			},
+			
+			// 获取上传图片的地址
+			changeImg(data){
+				this.data.img = data.value;
+				console.log("data",data);
 			}
 		}
 	}

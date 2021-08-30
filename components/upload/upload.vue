@@ -7,7 +7,7 @@
 			<!-- 已上传图片展示区域 -->
 			<view class="uploadList upBox" @click.stop="" v-for='(item,index) in uploadList' :key='index'>
 				<slot name="container">
-					<image :src="item.fileID" style="width:100%;height:100%;" alt="图片" @click="handleView(item)">
+					<image :src="item" style="width:100%;height:100%;" alt="图片" @click="handleView(item)">
 					<text class="_del" @click="handleRemove(index)"></text>
 				</slot>
 			</view>
@@ -96,9 +96,9 @@
 				uniCloud.uploadFile({
 					...options,
 					success:(res)=>{
-						console.log("res",res);
+						// console.log("res",res);
 						uni.hideLoading()
-						this.uploadList.push(res);
+						this.uploadList.push(res.fileID);
 						uni.showToast({title:"图片上传成功",icon:"none"})
 					},
 					fail: (err) => {
@@ -115,8 +115,8 @@
 
 			// 预览大图
 			handleView(item) {
-				if (item && item.fileID) {
-					this.previewImg = item.fileID;
+				if (item) {
+					this.previewImg = item;
 					this.preview = true;
 				}
 			},
