@@ -3,9 +3,7 @@
 
 		<view class="box header" style="position: relative;padding-bottom:0;">
 			<view class="avatar">
-				<view class="avatar-img" :style="{background:'url('+defaultaAvatar+') no-repeat 0 0/100% 100%'}"></view>
-				{{defaultaAvatar}}
-				<!-- <view class="avatar-img" :style="{background:'url('+`${userInfo.avatar?userInfo.avatar:defaultaAvatar}`+') no-repeat 0 0/100% 100%'}"></view> -->
+				<image class="avatar-img" src="@/static/images/avatar.webp" mode=""></image>
 			</view>
 			
 			<view class="header-name font22">
@@ -62,15 +60,12 @@
 </template>
 
 <script>
-	import defaultaAvatar from "@/static/images/avatar.webp"
 	import {mapMutations,mapGetters} from 'vuex';
 	export default {
 		data() {
 			return {
 				loginUrl:"/pages/common/login/login",
 				
-				// 默认头像
-				defaultaAvatar:"",
 				
 				// 修改表单
 				form:{

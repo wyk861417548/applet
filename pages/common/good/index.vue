@@ -1,6 +1,5 @@
 <template>
 	<view class="j-flex-col j-full-curbox" style="overflow: hidden;">
-		
 		<!-- 内容区  占据除底部tabber组件外的区域 -->
 		<view class="flex-adapt j-flex-col" style="position: relative;" v-if="goods">
 			
@@ -49,9 +48,9 @@
 													<text class="price colfc4">￥{{ product.price }}</text>
 													
 
-												<!-- 	<Action v-if="product.productAttr.length < 2" :num="goodCartNum(product.id)" @reduce="handleReduceToCart(product)" @add="handleAddToCart(product,1)"></Action>
+													<Action v-if="product.mode == '默认'" :num="goodCartNum(product.id)" @reduce="handleReduceToCart(product)" @add="handleAddToCart(product,1)"></Action>
 											
-													<text class="norm" v-if="product.productAttr.length > 1" @tap="showGoodDetailModal(product)">选规格</text> -->
+													<text class="norm" v-if="product.mode != '默认'" @tap="showGoodDetailModal(product)">选规格</text>
 												</view>
 												
 											</view>
@@ -341,6 +340,8 @@
 			
 			//添加到购物车 product 商品信息,num 数量, currentSelNorm 商品规格
 			handleAddToCart(product,num,currentSelNorm) {	
+				
+				console.log("pr",product,num,currentSelNorm);
 				const index = this.cart.findIndex(item => {
 					return item.id === product.id
 				})

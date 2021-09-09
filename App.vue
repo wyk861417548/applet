@@ -15,7 +15,7 @@
 
 <style lang="scss">
 	@import url("@/static/css/common.css");
-	
+	@import url("@/static/font/iconfont.css");
 	@import "uview-ui/index.scss";
 	// 注意引入外部scss 这样写
 	@import "@/static/css/app.scss";

@@ -1,6 +1,9 @@
 <template>
 	<view class="j-flex-col j-full-curbox" style="overflow: hidden;">
-		
+		<view class="j-flex">
+			<button type="default" style="width:40%"  @click="showTip" >新增类别</button>
+			<button type="default" style="width:40%" @click="$skip" data-url="/pages/admin/good/good">新增商品</button>
+		</view>
 		<!-- 内容区  占据除底部tabber组件外的区域 -->
 		<view class="flex-adapt j-flex-col" style="position: relative;" v-if="goods">
 			
@@ -69,6 +72,22 @@
 			</view>
 			
 		</view>
+		<um-alert ref="category">
+			<template>
+				<view class="box">
+					<view class="box-title">新增商品类别</view>
+					<view class="column">
+						<text class="left" style="width: 200rpx;">类别名称</text>
+						<input class="right" style="width: 300rpx;" type="text" v-model="category.name" placeholder="请输入商品类别名称"/>
+					</view>
+					
+					<view class="mt-20" style="text-align: right;">
+						<text class="mr-10" @click="close">取消</text>
+						<text class="col167" @click="confirm">确定</text>
+					</view>
+				</view>
+			</template>
+		</um-alert>
 		
 		
 		<!-- 自定义tabBar组件 -->
@@ -109,6 +128,15 @@
 					product:{},
 					
 					number:1
+				},
+				
+				// 商品类别信息
+				category:{
+					// 商品类别名称
+					name:"",
+					
+					// 用处存放商品容器
+					child:[]
 				},
 				
 				// 商品dom是否设置了top值
@@ -167,6 +195,37 @@
 		},
 		
 		methods: {
+			// 新增商品类别弹窗-------------
+			showTip(){
+				console.log("this",this.$refs);
+				this.$refs.category.show = true;
+			},
+			
+			// 确定弹窗事件
+			confirm(){
+				this.addCategory();
+				this.$refs.category.show = false;
+			},
+			
+			// 关闭弹窗事件
+			close(){
+				this.$refs.category.show = false;
+			},
+			
+			// 新增商品类别
+			addCategory(){
+				let data = {
+					action:"addCategory",
+					params:this.category
+				}
+				
+				this.$cloud.cloudFn(data).then(res=>{
+					uni.showToast({title:"添加成功",icon:"none"})
+					this.getCategory();
+				});
+			},
+			// end-----------------------
+			
 			// 获取商品类别
 			getCategory(){
 				let data = {

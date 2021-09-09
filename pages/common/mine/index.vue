@@ -1,20 +1,24 @@
 <template>
 	<view class="j-full-curbox j-flex-col">
 		<view style="flex:1;">
-			<view class="u-flex user-box u-p-l-30 u-p-r-20 u-p-b-30" @tap="$skip" :data-url="hasLogin?infoUrl:loginUrl">
-				<view class="u-m-r-10">
-					<u-avatar :src="userInfo.avatar" size="140"></u-avatar>
+			<view class="header flex mb-10" style="background-color: #f1b462;">
+			
+				<!-- 登录后显示  -->
+				<view class="flex-adapt flex-align"  @tap="$skip" :data-url="hasLogin?infoUrl:loginUrl">
+					
+					<view class="avatar" v-if="userInfo.avatar" :style="{background:'url('+userInfo.avatar+') no-repeat 0 0/100% 100%'}"></view>
+					<view class="avatar" v-if="!userInfo.avatar"></view>
+					
+					<view class="flex-adapt">
+						<view class="font20">{{userInfo.username}}</view>
+						<view class="mt-10">{{$config.stringReg(userInfo.phone)}}</view>
+					</view>
+					
+					<view class="u-m-l-10 u-p-10">
+						<u-icon name="arrow-right" color="#969799" size="28"></u-icon>
+					</view>
 				</view>
-				<view class="u-flex-1">
-					<view class="u-font-18 u-p-b-20">{{userInfo.username}}</view>
-					<view class="u-font-14 u-tips-color">微信号:helang_uView()</view>
-				</view>
-				<view class="u-m-l-10 u-p-10">
-					<u-icon name="scan" color="#969799" size="28"></u-icon>
-				</view>
-				<view class="u-m-l-10 u-p-10">
-					<u-icon name="arrow-right" color="#969799" size="28"></u-icon>
-				</view>
+				
 			</view>
 			
 			<view class="u-m-t-20">
@@ -46,7 +50,6 @@
 				// 菜单列表
 				menuList:[
 					{name:"地址",icon:"car-fill",url:"/pages/common/mine/address/index"},
-					{name:"设置",icon:"setting",url:"/pages/common/mine/setting/index"},
 				]
 			}
 		},
@@ -71,12 +74,21 @@
 </script>
 
 <style lang="scss">
-	.camera{
-		width: 54px;
-		height: 44px;
-		
-		&:active{
-			background-color: #ededed;
+	.header{
+		background-color: #fff;
+		border-radius:0 0 20rpx 20rpx;
+		padding:40rpx 30rpx;
+		image{
+			width: 120rpx;
+			margin-right: 20rpx;
+		}
+		.avatar{
+			width: 120rpx;
+			height: 120rpx;
+			border-radius: 50%;
+			margin-right: 20rpx;
+			background: url('~@/static/images/avatar.webp') no-repeat 0 0/100% 100%;
+			overflow: hidden;
 		}
 	}
 	.user-box{
