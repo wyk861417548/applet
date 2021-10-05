@@ -174,7 +174,7 @@
 				menuHeight:[],
 				
 				// 购物车商品
-				cart:[],
+				cart:[{}],
 				
 				// 给提交订单页面的值
 				cartId:[],
@@ -186,22 +186,18 @@
 		onLoad() {
 			
 			this.getCategory();
-			// if(this.$store.state.cartStatus == false){
-			// 	this.getCartList(true);
-			// }
+			if(this.$store.state.cartStatus == false){
+				this.getCartList(true);
+			}
 			
 		},
 		onShow() {
-			// this.init('good');
-			// this.currentIndex = this.goods[0].id;
-			// this.category_title.title = this.goods[0].name;
-			return;
 			// cartStatus 购物车状态  默认false首次进入会请求一次，当确定提交订单之后该状态才会改变
-			if(this.$store.state.cartStatus){
+			// if(this.$store.state.cartStatus){
 				this.cart = [];
 				this.$store.commit("changeCartStatus",false);
 				this.getCartList(true);
-			}
+			// }
 		},
 		computed:{
 			//计算单个饮品添加到购物车的数量
@@ -233,38 +229,35 @@
 			getCartList(boolen){
 				this.cartOrder = [];
 				this.cartId = [];
-				var data = {
-					page: 1,
-					limit: 20,
-					isValid: true
+			
+				let data = {
+					action:"getCart"
 				}
-				// good_id 商品添加后  后台给商品定义的id  id：获取商品列表时商品的id
-				this.$get(this.$api.stock.cart.list,data).then(res=>{
-					res.data.list.map(item=>{
-						console.log("item.productInfo.storeName",item.productInfo.storeName);
-						this.cartOrder.push({
-							// 购物车表ID
-							good_id:item.id,
-							// 商品规格
-							productAttrUnique:item.productAttrUnique,
-							// 商品id
-							id: item.productId,
-							name: item.productInfo.storeName,
-							price:item.productInfo.price,
-							number: item.cartNum,
-							image:item.productInfo.image,
+				this.$cloud.cloudFn(data).then(res=>{
+					console.log('获取购物车商品信息',res);
+						res.data.map(item=>{
+							console.log(item.img);
+							this.cartOrder.push({
+								// 商品规格
+								productAttrUnique:item.mode,
+								// 商品id
+								id: item.id,
+								name: item.name,
+								price:item.price,
+								number: item.num,
+								image:item.img[0],
+							})
+							
+							this.cartId.push(item.id);
 						})
+						if(boolen){
+							this.cart = this.cartOrder;
+						}
 						
-						this.cartId.push(item.id);
-					})
-					if(boolen){
-						this.cart = this.cartOrder;
-					}
-					
-					// 改变购物车状态 vuex
-					this.$store.commit("changeCartStatus",false)
+						// 改变购物车状态 vuex
+						// this.$store.commit("changeCartStatus",false)
+				});
 				
-				})
 			},
 			
 			// -----------------------------------------商品详情弹窗事件----------------------------------
@@ -326,13 +319,10 @@
 			// 确认订单
 			handleToPay(){
 				// 如果还没有登录
-				if(!this.$store.state.token) {
-					uni.reLaunch({url:"/pages/login/loginwx?edit=true"})
-					return
-				}
+			
 	
 				uni.navigateTo({
-				  url: '/pages/store/stock/stockDetail?cartId='+this.cartId.toString()
+				  url: '/pages/user/order/cartDetail'
 				});
 				
 			},
@@ -346,56 +336,45 @@
 					return item.id === product.id
 				})
 				
-				var data = {
-					cartNum: num?num:1,
-					productId: product.id,
-					isNew:false,
-				}
-				
+				var data = {...product}
+				data.num = num?num:1;
 				// 如果是需要选择规格的商品
 				if(this.currentSelNorm.length > 0 ){
 					let type = this.currentSelNorm.join(',');
 					data.productAttrUnique = product.productValue[type].id
 				}else{
-					data.productAttrUnique = product.productAttrUnique || product.productValue['默认'].id
+					// 默认
+					data.mode = 0;
 				}
 				
-			
+			// 将商品添加到购物车
 				
-				this.$post(this.$api.stock.cart.add,data).then(res=>{
-					if(index > -1) {
-						this.cart[index].number += (num || 1)
-					} else {
-						this.cart.push({
-							id: product.id,
-							name: product.store_name,
-							price: product.price,
-							number: num || 1,
-							image: product.image,
-						})
-						this.getCartList(true);
-					}
-					
-				})
+			let params = {
+				action:"setCart",
+				params:data
+			}
+			this.$cloud.cloudFn(params).then(res=>{
+				// uni.showToast({title:"添加成功",icon:"none"})
+				this.getCartList(true);
+			});
 				
-			},
+				
+		},
 			
 			// 減少當前商品數量
 			handleReduceToCart(product){
 				const index = this.cart.findIndex(item => item.id == product.id);
+	
 				
-				// const index = this.cart.findIndex(item => {
-				// 	console.log("item",item,item.id,product.id);
-				// 	item.id == product.id
-				// })
-				//减少当前商品接口 
-				this.$post(this.$api.stock.cart.reduce,{id:this.cart[index].good_id,number:this.cart[index].number-1},{type:true}).then(res=>{
-					this.cart[index].number -= 1
-					if(this.cart[index].number <= 0) {
-						this.cart.splice(index, 1)
-					}
-					
-				})
+				let params = {
+					action:"reduceCart",
+					params:product
+				}
+				this.$cloud.cloudFn(params).then(res=>{
+					// uni.showToast({title:"添加成功",icon:"none"})
+					this.getCartList(true);
+				});
+				
 				
 			},
 			
@@ -406,11 +385,14 @@
 					clearCartArr.push(item.good_id);
 				})
 				
-				var ids = clearCartArr.join(",");
 				
-				this.$post(this.$api.stock.cart.del,{ids:ids},{type:true}).then(res=>{
-					this.cart = [];
-				})
+				let params = {
+					action:"removeCart",
+				}
+				this.$cloud.cloudFn(params).then(res=>{
+					// uni.showToast({title:"添加成功",icon:"none"})
+					this.getCartList(true);
+				});
 				
 			},
 			

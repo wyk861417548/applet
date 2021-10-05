@@ -1,59 +1,77 @@
 <template>
-	<view class="j-full-curbox j-flex-col">
-		
-		<!-- 内容显示区域 -->
-		<view class="flex container" style="flex:1;background-color: #108EE9;">
-			<!-- :scroll-top="verticalNavTop" -->
-			<scroll-view class="left" scroll-y :scroll-with-animation='true'>
-				<view  @click="showTip"> 新增类别</view>
-				
-				<view class="menu" :id="`menu-${item.id}`" v-for="(item, index) in goods" :key="index" :class="{'current': item.id == currentIndex}"  @tap="handleMenuTap(item.id)">
-					<text>{{ item.name }}</text>
-				</view>
-				
-				
-			</scroll-view>
+	<view class="j-flex-col j-full-curbox" style="overflow: hidden;">
+		<view class="j-flex">
+			<button type="default" style="width:40%"  @click="showTip" >新增类别</button>
+			<button type="default" style="width:40%" @click="$skip" data-url="/pages/admin/good/good">新增商品</button>
+		</view>
+		<!-- 内容区  占据除底部tabber组件外的区域 -->
+		<view class="flex-adapt j-flex-col" style="position: relative;" v-if="goods">
 			
-			<scroll-view class="right" scroll-y  :scroll-with-animation='true'>
-				<view  @click="$skip" data-url="/pages/admin/good/good"> 新增商品</view>
+			<!-- 主题内容区域 -->
+			<view class="container" style="position: relative;">
 				
-				<view class="category" v-for="(category, index) in goods" :key="index" :id="`cate-${category.id}`">
-					<!-- 商品类别 -->
-					<view class="title">
-						<text v-if="index == 0"></text>
-						<text v-if="index != 0">{{category.name }}</text>
-					</view>
-				
-					<!-- 商品循环 -->
-					<view class="good" v-for="(product, key) in category.child" :key="key">
-						<view class="" style="height: 20rpx;"></view>
-						<view class="flex">
-							<view class="image" :style="{background:'url('+product.img[0]+') no-repeat center / cover;'}" @tap='$skip' :data-url="'/pages/store/stock/goodDetail?id='+product.id"></view>
-											
-							<view class="right">
-								<!-- 商品名称 -->
-								<view>{{ product.name }}</view>
-								<!-- 商品描述 -->
-								<text class="tips text-overflowMut">{{ product.introduct }}</text>
+				<view class="j-full-curbox flex">
+					<!-- 左侧菜单栏 --> 
+					<!-- :scroll-top="verticalNavTop" -->
+					<scroll-view class="container-left" scroll-y :scroll-top="verticalNavTop" :scroll-with-animation='true'>
+						<view class="menu" :id="`menu-${item.id}`" v-for="(item, index) in goods" :key="index" :class="{'current': item._id == currentIndex}"  @tap="handleMenuTap(item._id)">
+							<text>{{ item.name }}</text>
+						</view>
+					</scroll-view>
+					
+					<view class="container-right j-flex-col">
+						<!-- 右侧一直展示当前显示类别快 -->
+						<view class="category-title">
+							<text>{{category_title.title}}</text>
+						</view>
+						
+						<!-- 右侧商品 -->
+						<view style="position: relative;flex:1;">
+							<scroll-view  class="j-full-curbox" style="top:-80rpx;" scroll-y @scroll="handleGoodsScroll" scroll-with-animation :scroll-top="cateScrollTop">
 								
-								<view class="price_and_action j-flex" style="width: 100%;">
-									<text class="price colfc4">￥{{ product.price }}</text>
-									
-				
-								<!-- 	<Action v-if="product.productAttr.length < 2" :num="goodCartNum(product.id)" @reduce="handleReduceToCart(product)" @add="handleAddToCart(product,1)"></Action>
+								<view class="category" v-for="(category, index) in goods" :key="index" :id="`cate-${category.id}`">
+									<!-- 商品类别 -->
+									<view class="title">
+										<text v-if="index == 0"></text>
+										<text v-if="index != 0">{{category.name }}</text>
+									</view>
 							
-									<text class="norm" v-if="product.productAttr.length > 1" @tap="showGoodDetailModal(product)">选规格</text> -->
+									<!-- 商品循环 -->
+									<view class="good" v-for="(product, key) in category.child" :key="key">
+										<view class="" style="height: 20rpx;"></view>
+										<view class="flex">
+											<view class="image" :style="{background:'url('+product.img+') no-repeat center / cover;'}" @tap='$skip' :data-url="'/pages/store/stock/goodDetail?id='+product.id"></view>
+							
+											<view class="right">
+												<!-- 商品名称 -->
+												<view>{{ product.name }}</view>
+												<!-- 商品描述 -->
+												<text class="tips text-overflowMut">{{ product.introduct }}</text>
+												
+												<view class="price_and_action j-flex" style="width: 100%;">
+													<text class="price colfc4">￥{{ product.price }}</text>
+													
+
+												<!-- 	<Action v-if="product.productAttr.length < 2" :num="goodCartNum(product.id)" @reduce="handleReduceToCart(product)" @add="handleAddToCart(product,1)"></Action>
+											
+													<text class="norm" v-if="product.productAttr.length > 1" @tap="showGoodDetailModal(product)">选规格</text> -->
+												</view>
+												
+											</view>
+										</view>
+									</view>					
 								</view>
 								
-							</view>
+								<!-- 最后的空白区域  为了防止购物车把最后的商品挡住 -->
+								<view style="height: 200rpx;"></view>
+							</scroll-view>
 						</view>
-					</view>					
+						
+					</view>
 				</view>
-			</scroll-view>
+			</view>
 			
 		</view>
-		
-
 		<um-alert ref="category">
 			<template>
 				<view class="box">
@@ -71,23 +89,46 @@
 			</template>
 		</um-alert>
 		
+		
 		<!-- 自定义tabBar组件 -->
 		<view class="" style="height: 100rpx;">
-			<!-- 新增商品类别弹窗 -->
-			
 			<um-tabs></um-tabs>
 		</view>
 	</view>
 </template>
 
 <script>
+	
+	const db = uniCloud.database();
+	
 	export default {
 		data() {
 			return {
-				show: false,
+				// 头部展示栏内容
+				category_title:{
+					title:""
+				},
 				
-				// 商品信息
+				// 当前选中的规格
+				currentSelNorm:[],
+				
+				// 是否是点击了左侧
+				handleMenu:false,
+				
+				//当先左侧菜单索引
+				currentIndex: '',
+				
+				// 商品数据
 				goods:[],
+				
+				
+				// 商品单个详情
+				modal:{
+					// 单个商品
+					product:{},
+					
+					number:1
+				},
 				
 				// 商品类别信息
 				category:{
@@ -96,41 +137,66 @@
 					
 					// 用处存放商品容器
 					child:[]
-				}
+				},
+				
+				// 商品dom是否设置了top值
+				sizeCalcState:false,
+				
+				// 点击左侧菜单，右边商品对应滚动距离
+				cateScrollTop:0,
+				
+				// 左侧菜单栏跟随右侧滚动而滚动
+				verticalNavTop:0,
+				
+				// 左侧每个菜单选项的高度
+				menuHeight:[],
+				
+				// 购物车商品
+				cart:[],
+				
+				// 给提交订单页面的值
+				cartId:[],
+				
+				// 当前购物车订单
+				cartOrder:[]
 			}
 		},
-		
 		onLoad() {
+			
+			
+			// if(this.$store.state.cartStatus == false){
+			// 	this.getCartList(true);
+			// }
+			
+		},
+		onShow() {
 			this.getCategory();
+			// this.init('good');
+			// this.currentIndex = this.goods[0].id;
+			// this.category_title.title = this.goods[0].name;
+			return;
+			// cartStatus 购物车状态  默认false首次进入会请求一次，当确定提交订单之后该状态才会改变
+			if(this.$store.state.cartStatus){
+				this.cart = [];
+				this.$store.commit("changeCartStatus",false);
+				this.getCartList(true);
+			}
+		},
+		computed:{
+			//计算单个饮品添加到购物车的数量
+			goodCartNum() {	
+				return (id) => this.cart.reduce((acc, cur) => {
+					if(cur.id === id) {
+						return acc += cur.number
+					}
+					return acc
+				}, 0)
+			},
+	
 		},
 		
 		methods: {
-			// 获取商品类别以及商品信息
-			getCategory(){
-				let data = {
-					action:"getCategory"
-				}
-				
-				this.$cloud.cloudFn(data).then(res=>{
-					console.log("getCategory",res);
-					this.goods = res.data;
-				});
-			},
-			
-			// 新增商品类别
-			addCategory(){
-				let data = {
-					action:"addCategory",
-					params:this.category
-				}
-				
-				this.$cloud.cloudFn(data).then(res=>{
-					uni.showToast({title:"添加成功",icon:"none"})
-					this.getCategory();
-				});
-			},
-			
-			// 新增商品类别弹窗
+			// 新增商品类别弹窗-------------
 			showTip(){
 				console.log("this",this.$refs);
 				this.$refs.category.show = true;
@@ -147,6 +213,70 @@
 				this.$refs.category.show = false;
 			},
 			
+			// 新增商品类别
+			addCategory(){
+				let data = {
+					action:"addCategory",
+					params:this.category
+				}
+				
+				this.$cloud.cloudFn(data).then(res=>{
+					uni.showToast({title:"添加成功",icon:"none"})
+					this.getCategory();
+				});
+			},
+			// end-----------------------
+			
+			// 获取商品类别
+			getCategory(){
+				let data = {
+					action:"getCategory"
+				}
+				this.$cloud.cloudFn(data).then(res=>{
+					this.goods = res.data;
+					this.currentIndex = this.goods[0]._id;
+					this.category_title.title = this.goods[0].name;
+				});
+			},
+			
+			// 获取购物车商品数据
+			getCartList(boolen){
+				this.cartOrder = [];
+				this.cartId = [];
+				var data = {
+					page: 1,
+					limit: 20,
+					isValid: true
+				}
+				// good_id 商品添加后  后台给商品定义的id  id：获取商品列表时商品的id
+				this.$get(this.$api.stock.cart.list,data).then(res=>{
+					res.data.list.map(item=>{
+						console.log("item.productInfo.storeName",item.productInfo.storeName);
+						this.cartOrder.push({
+							// 购物车表ID
+							good_id:item.id,
+							// 商品规格
+							productAttrUnique:item.productAttrUnique,
+							// 商品id
+							id: item.productId,
+							name: item.productInfo.storeName,
+							price:item.productInfo.price,
+							number: item.cartNum,
+							image:item.productInfo.image,
+						})
+						
+						this.cartId.push(item.id);
+					})
+					if(boolen){
+						this.cart = this.cartOrder;
+					}
+					
+					// 改变购物车状态 vuex
+					this.$store.commit("changeCartStatus",false)
+				
+				})
+			},
+			
 			// -----------------------------------------商品详情弹窗事件----------------------------------
 			// 点击商品图片查看商品详情
 			showGoodDetailModal(product){
@@ -154,6 +284,8 @@
 				this.currentSelNorm = [];
 				 
 				this.modal.product = product;
+				
+				// this.modal.product.productAttr = [{"productId":29,"attrValue":[{"attr":"330ml"}],"type":0,"attrValues":["330ml",'400ml','500ml','600没了'],"attrName":"容量"},{"productId":29,"attrValue":[{"attr":"24"}],"type":0,"attrValues":["24",'14','8'],"attrName":"箱"}]
 				
 				// 点击选择规格  默认选中所有规格中第一条
 				this.modal.product.productAttr.map((item,index)=>{
@@ -208,7 +340,7 @@
 					uni.reLaunch({url:"/pages/login/loginwx?edit=true"})
 					return
 				}
-				
+	
 				uni.navigateTo({
 				  url: '/pages/store/stock/stockDetail?cartId='+this.cartId.toString()
 				});
@@ -304,8 +436,8 @@
 				this.handleMenu = true;
 				
 				// this.cateScrollTop = this.goods.find(item => item.id == id).top;
-				this.$nextTick(() => this.cateScrollTop = this.goods.find(item => item.id == id).top);
-					
+				this.$nextTick(() => this.cateScrollTop = this.goods.find(item => item._id == id).top);
+		
 			},
 			
 			// 商品滚动触发  滚动时触发，event.detail = {scrollLeft, scrollTop, scrollHeight, scrollWidth, deltaX, deltaY}
@@ -320,7 +452,7 @@
 				// 当有商品类别距离小于滚动距离时添加，取反第一个就是当前商品
 				let tabs = this.goods.filter(item=> item.top <= scrollTop).reverse();
 				
-				tabs.length > 0?this.category_title.title = tabs[0].cateName:'';
+				tabs.length > 0?this.category_title.title = tabs[0].name:'';
 				// 点击左侧 右侧滚动不会因为 最后一个类别不满足条件 再次导致左侧滚动
 				if(this.handleMenu){
 					this.handleMenu = false;
@@ -329,7 +461,7 @@
 				
 				if(tabs.length > 0){
 					let top  = 0;
-					this.currentIndex = tabs[0].id;
+					this.currentIndex = tabs[0]._id;
 					
 					//设置左侧菜单栏的滚动高度
 					for(let i=1;i<tabs.length;i++){
@@ -381,31 +513,6 @@
 		}
 	}
 </script>
-<!-- 
-<style lang="scss">
-	.header{
-		button{
-			padding: 0 20rpx;
-		}
-	}
-	.container{
-		.left{
-			width: 30%;
-			background-color: #fff;
-			border-right: 2rpx solid rgba(221,221,221,.3);
-			& view{
-				text-align: center;
-			}
-		}
-		.right{
-			.image{
-				width:80rpx;
-				height: 80rpx;
-			}
-			
-		}
-	}
-</style> -->
 
 <style lang="scss" scoped>
 	.dialog{
@@ -473,7 +580,7 @@
 	.container{
 		flex: 1;
 		overflow: hidden;
-		.left{
+		.container-left{
 			width: 200rpx;
 			height: 100%;
 			background-color: #f2f2f2;
@@ -495,7 +602,7 @@
 				border-radius: 0 10rpx 0 0;
 			}
 		}
-		.right{
+		.container-right{
 			flex:1;
 			position: relative;
 			.category-title{

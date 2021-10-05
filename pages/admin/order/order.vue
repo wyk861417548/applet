@@ -1,48 +1,12 @@
 <template>
-	<view class="j-flex-col j-full-curbox">
-		
-		<!-- 内容区  占据除底部tabber组件外的区域 -->
-		<view class="flex-adapt container j-flex-col" style="position: relative;">
-			<view class="tabbar">
-				<view class="item" :class="{active: !tabIndex}" @tap="switchTab(0)">当前订单</view>
-				<view class="item" :class="{active: tabIndex}" @tap="switchTab(1)">历史订单</view>
+	<view class="j-full-curbox bgf1f container">
+			<view class="box">
+				<view class="">总营业额度：<text class="colfc4">￥{{orderPrice}} </text></view>
 			</view>
 			
-			<view class="flex-adapt bgf1f container-content" style="overflow: auto;">
-				<view style="position: absolute;top: 0;left: 0;right: 0;bottom: 0;padding:0 26rpx;">
-					<!-- 当前订单 begin -->
-					
-					<view style="width: 100%;height: 100%;"  v-show="tabIndex == 0" class="order-current">
-						<view class="container box flex-adapt j-full-curbox p-10">
-							<view class="list flex p-10"  v-for="(item,index) in order.current.list" :key="index">
-								<view class="flex" style="align-items: flex-end;">
-									<view class="avatar" :style="{background:'url('+item.img[0]+') no-repeat 0 0/100% 100%'}"></view>
-									<view class="col5A5 font12 ml-10">x {{item.num}}</view>
-								</view>
-								<view class="flex-adapt j-flex-col ml-10" style="justify-content: space-between;">
-									<view class="col5A5 mr-10">{{item.name}}</view>
-									<view class="col5A5 colfc4" style="text-align: right;">￥{{item.price}}</view>
-								</view>
-								
-							</view>
-						</view>
-						
-						<view v-if="order.current.show" class="no-order-content j-full-center">
-							<view class="title col999" style="margin:20rpx auto;">您今天还没有下单</view>
-							<button type="primary" class="font-size-lg" hover-class="none" @tap="handlesetOrder">去下单</button>
-						</view>
-					</view>
-				
-					<!-- 当前订单 end -->
-						
+			<view class="container-content" style="overflow: auto;">
 					<!-- 历史订单 begin -->
-					<view  style="width: 100%;height: 100%;" v-show="tabIndex == 1"  class="order-history">
-						<uni-nodata ref="nodata"></uni-nodata>
-						<scroll-view
-							:scroll-top="0"
-							scroll-y="true"
-							style="width: 100%; height: 100%;"
-							@scrolltolower="F_scrollLoad(4)">
+					<view  style="width: 100%;height: 100%;"   class="order-history">
 							
 							<view v-if="order.history.list.length > 0" class="list" v-for="(item,index) in order.history.list" :key="index" @tap="skip(item)">
 								<view class="j-flex list-header">
@@ -57,23 +21,14 @@
 									</view>
 									
 								</view>
-								<view class="" style="text-align: right;" v-if="item.status.type == 2">
-									<button type="warn" style="display: inline-block;width: 30%;line-height:1.5em;padding: 10rpx 10rpx;" @tap.stop="confirmOrder(item.storeOrder.id)">确认收货</button>
-								</view>
 							</view>
 							
-							<list-end v-if="order.history.end" />
-						</scroll-view>
 					</view>
 					<!-- 历史订单 end -->
 				</view>
 			</view>
-		</view>
 		
-		<!-- 自定义tabBar组件 -->
-		<view class="" style="height: 100rpx;">
-			<um-tabs></um-tabs>
-		</view>
+	
 	</view>
 </template>
 
@@ -126,7 +81,7 @@ export default {
 	
 	onShow() {
 		// 状态默认false 如果购物车状态没有改变不会再次请求
-		this.getCurrentOrder();
+		this.getHistoryOrder();
 	
 	},
 	
@@ -134,33 +89,23 @@ export default {
 		
 	},
 	computed: {
+		//计算购物车总价
+		orderPrice() {
+			return this.order.history.list.reduce((acc, cur) => acc + cur.totalPrice, 0)
+		},
 	},
 	methods: {
-		// 当前订单
-		getCurrentOrder(){
-			var current = this.order.current;
-					
-			let data = {
-				action:"getCart"
-			}
-			this.$cloud.cloudFn(data).then(res=>{
-				if(res.data.length > 0){
-					current.list = res.data;
-					return;
-				}
-				this.order.current.show = true;
-			});
-			
-		},
 		
-		// 历史订单
+		// 获取历史订单 评价等级|0=未支付,1=待发货,2=待收货,3=待评价,4=已完成,-3=售后/退款
 		getHistoryOrder(){
 			var history = this.order.history;
 			let params = {
 				action:"getOrder"
 			}
+			
 			this.$cloud.cloudFn(params).then(res=>{
 				// uni.showToast({title:"添加成功",icon:"none"})
+				console.log("res",res.data);
 				if(res.data.length > 0){
 					history.list = res.data;
 					return;
@@ -192,7 +137,7 @@ export default {
 		skip(data,type){
 			
 			uni.navigateTo({
-				url:"/pages/user/order/orderDetail?orderId="+data.id
+				url:"/pages/admin/order/orderDetail?orderId="+data.id
 			})
 		},
 		
@@ -220,18 +165,8 @@ export default {
 		border-bottom: 4rpx solid  #ADB838;
 	}
 	.container{
-		position: relative;
-		.list{
-			border-bottom: 2rpx solid rgba(221,221,221,.5);
-			image{
-				width: 140rpx;
-			}
-			.avatar{
-				width: 150rpx;
-				height: 150rpx;
-				border-radius: 8rpx;
-			}
-		}
+		width: 100%;
+		height: 100%;
 		.tabbar{
 			display: flex;
 			align-items: center;

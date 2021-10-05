@@ -49,7 +49,7 @@ exports.main = async (event, context) => {
         msg: '缺少token'
       }
     }
-		
+		// 用于校验token是否失效
 		payload = await uniID.checkToken(event.uniIdToken)
 		
 		console.log("payload",payload);
@@ -186,272 +186,91 @@ exports.main = async (event, context) => {
 			break;
 		}
 		
-		case 'updatePwd': {
-		  const {
-		    uid,
-		    oldPassword,
-		    newPassword
-		  } = params
-		  res = await uniID.updatePwd({
-		    uid,
-		    oldPassword,
-		    newPassword
-		  });
-		  break;
+		//新增商品到购物车
+		case "setCart":{
+			let data = await db.collection('cart').where({id:params.id}).get();
+			console.log("setCart",db.collection('good').doc(params.id),data);
+			if(data.affectedDocs == 0){
+				await db.collection('cart').add(params).then((json)=>{
+					if(json.id){
+						res = code
+					}
+				})
+			}else{
+				await db.collection('cart').where({id:params.id}).update({
+					num:data.data[0].num+1
+				}).then((json)=>{
+					res = Object.assign(code,json)
+				})
+			}
+			
+			break;
 		}
 		
-    case 'setAvatar': {
-      const {
-        uid,
-        avatar
-      } = params
-      res = await uniID.setAvatar({
-        uid,
-        avatar
-      });
-      break;
-    }
+		//获取购物车商品信息
+		case "getCart":{
+			await db.collection('cart').get().then((json)=>{
+				console.log("json",json);
+				res = Object.assign(code,json)
+			})
+			break;
+		}
 		
-    case 'bindMobile': {
-      const {
-        uid,
-        mobile,
-        code
-      } = params
-      res = await uniID.bindMobile({
-        uid,
-        mobile,
-        code
-      });
-      break;
-    }
-		
-    case 'unbindMobile': {
-      const {
-        uid,
-        mobile,
-        code
-      } = params
-      res = await uniID.unbindMobile({
-        uid,
-        mobile,
-        code
-      });
-      break;
-    }
-		
-    case 'code2SessionWeixin': {
-      const {
-        code
-      } = params
-      res = await uniID.code2SessionWeixin({
-        code
-      });
-      break;
-    }
-    case 'loginByWeixin': {
-      const {
-        code
-      } = params
-      res = await uniID.loginByWeixin({
-        code
-      });
-      break;
-    }
-    case 'bindWeixin': {
-      const {
-        uid,
-        code
-      } = params
-      res = await uniID.bindWeixin({
-        uid,
-        code
-      });
-      break;
-    }
-    case 'unbindWeixin':
-      res = await uniID.unbindWeixin(params.uid);
-      break;
-    case 'checkToken':
-      // 注意3.0.0版本取消了checkToken接口返回的用户信息
-      res = await uniID.checkToken(event.uniIdToken, {
-        needPermission: true
-      })
-      break;
-    case 'resetPwd':
-      res = await uniID.resetPwd({
-        uid: params.uid,
-        password: '123456'
-      });
-      break;
-    case 'encryptPwd':
-      const password = await uniID.encryptPwd('123456');
-      res = {
-        code: 0,
-        msg: '密码加密完成',
-        password
-      }
-      break;
-    case 'sendSmsCode': {
-			/* -开始- 测试期间，为节约资源。统一虚拟短信验证码为： 123456；开启以下代码块即可  */
-				return uniID.setVerifyCode({
-					mobile: params.mobile,
-					code: '123456',
-					type: params.type
+		//从购物车中删除某商品
+		case "reduceCart":{
+			let data = await db.collection('cart').where({id:params.id}).get();
+			console.log("setCart",db.collection('good').doc(params.id),data);
+			if(data.data[0].num==1){
+				await db.collection('cart').doc(data.data[0]._id).remove().then(json=>{
+					res = Object.assign(code,json)
+				});
+			}else{
+				await db.collection('cart').where({id:params.id}).update({
+					num:data.data[0].num-1
+				}).then((json)=>{
+					res = Object.assign(code,json)
 				})
-			/* -结束- */
-      const {
-        mobile,
-        code, // 实际项目中code应由云端生成，这里为了方便演示由客户端上传
-        type
-      } = params
-      const templateId = '00000' + Math.floor(Math.random() * 1000000);
-      if (templateId === '') {
-        throw new Error('sendSmsCode接口需要传入templateId来指定所使用的短信模板')
-      }
-      res = await uniID.sendSmsCode({
-        mobile,
-        code, // sendSmsCode接口不传code时会自动生成code，推荐不传code
-        type,
-        templateId
-      });
-      break;
-    }
-    case 'setVerifyCode': {
-      const {
-        mobile,
-        code,
-        type
-      } = params
-      res = await uniID.setVerifyCode({
-        mobile,
-        code,
-        type
-      });
-      break;
-    }
-    case 'loginBySms': {
-      const {
-        mobile,
-        code
-      } = params
-      res = await uniID.loginBySms({
-        mobile,
-        code
-      });
-      break;
-    }
-		// 更新用户信息
-    case 'updateUser': {
-      const {
-        uid,
-        nickname
-      } = params
-      res = await uniID.updateUser({
-        uid,
-        nickname
-      });
-      break;
-    }
-    case 'setUserInviteCode': {
-      const {
-        uid,
-        // myInviteCode 不指定myInviteCode，自动获取
-      } = params
-      res = await uniID.setUserInviteCode({
-        uid
-      });
-      break;
-    }
-    case 'addRole': {
-      const {
-        roleID,
-        roleName,
-        comment,
-        permission
-      } = params
-      res = await uniID.addRole({
-        roleID,
-        roleName,
-        comment,
-        permission
-      });
-      break;
-    }
-    case 'getRoleList': {
-      const {
-        offset,
-        limit,
-        needTotal
-      } = params
-      res = await uniID.getRoleList({
-        offset,
-        limit,
-        needTotal
-      });
-      break;
-    }
-    case 'addPermission': {
-      const {
-        permissionID,
-        permissionName,
-        comment
-      } = params
-      res = await uniID.addPermission({
-        permissionID,
-        permissionName,
-        comment
-      });
-      break;
-    }
-    case 'getPermissionList': {
-      const {
-        offset,
-        limit,
-        needTotal
-      } = params
-      res = await uniID.getPermissionList({
-        offset,
-        limit,
-        needTotal
-      });
-      break;
-    }
-    case 'getRoleByUid': {
-      const {
-        uid
-      } = params
-      res = await uniID.getRoleByUid({
-        uid
-      });
-      break;
-    }
-    case 'bindRole': {
-      const {
-        roleList,
-        // 设置reset为true，整体覆盖。设置为false时增量更新role
-        reset,
-      } = params
-      res = await uniID.bindRole({
-        roleList,
-        reset,
-      });
-      break;
-    }
-    case 'bindPermission': {
-      const {
-        roleID,
-        permissionList,
-        // 设置reset为true，整体覆盖。设置为false时增量更新role
-        reset,
-      } = params
-      res = await uniID.bindPermission({
-        roleID,
-        permissionList,
-        reset,
-      });
-      break;
-    }
+			}
+			break;
+		}
+		
+		//清空购物车
+		case "removeCart":{
+			let data = await db.collection('cart').get();
+			
+			data.data.map(async(item) => {
+				console.log('removeCart',item._id);
+			  return await db.collection('cart').doc(item._id).remove();
+			});
+			
+			res = await Object.assign(code)
+			
+			break;
+		}
+		
+		// 创建订单
+		case "setOrder":{
+			// 每次设置默认地址 把其他的默认地址设置非默认地址
+			await db.collection('order').add(params).then((json)=>{
+				res = Object.assign(code,json)
+			})
+			break;
+		}
+		
+		case "getOrderOne":{
+			await db.collection('order').where({id:params.id}).get().then((json)=>{
+				res = Object.assign(code,json)
+			})
+			break;
+		}
+		
+		case "getOrder":{
+			await db.collection('order').get().then((json)=>{
+				res = Object.assign(code,json)
+			})
+			break;
+		}
+		
     default:
       res = {
         code: 404,

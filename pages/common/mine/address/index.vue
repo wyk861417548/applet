@@ -73,14 +73,14 @@ export default {
 		
     //设置默认地址
     setDefault(id){
-			let data = {
-				action:"setDefalutAddress",
-				// 查询索引
-				_id:id
-			}
-			this.$cloud.cloudFn(data).then(res=>{
-				uni.showToast({title:"设置成功",icon:"none"})
-			});
+		let data = {
+			action:"setDefalutAddress",
+			// 查询索引
+			_id:id
+		}
+		this.$cloud.cloudFn(data).then(res=>{
+			uni.showToast({title:"设置成功",icon:"none"})
+		});
     },
 		
 		// 确认是否删除地址弹窗

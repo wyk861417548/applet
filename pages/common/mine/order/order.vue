@@ -5,27 +5,36 @@
 		<view class="flex-adapt container j-flex-col" style="position: relative;">
 			<view class="tabbar">
 				<view class="item" :class="{active: !tabIndex}" @tap="switchTab(0)">当前订单</view>
-				<view class="item" :class="{active: tabIndex}" @tap="switchTab(1)">历史订单</view>
+				<view class="item" :class="{active: tabIndex}" @tap="switchTab(1)">所有订单</view>
 			</view>
 			
 			<view class="flex-adapt bgf1f container-content" style="overflow: auto;">
 				<view style="position: absolute;top: 0;left: 0;right: 0;bottom: 0;padding:0 26rpx;">
 					<!-- 当前订单 begin -->
-					
 					<view style="width: 100%;height: 100%;"  v-show="tabIndex == 0" class="order-current">
-						<view class="container box flex-adapt j-full-curbox p-10">
-							<view class="list flex p-10"  v-for="(item,index) in order.current.list" :key="index">
-								<view class="flex" style="align-items: flex-end;">
-									<view class="avatar" :style="{background:'url('+item.img[0]+') no-repeat 0 0/100% 100%'}"></view>
-									<view class="col5A5 font12 ml-10">x {{item.num}}</view>
+						<scroll-view
+							:scroll-top="0"
+							scroll-y="true"
+							style="width: 100%; height: 100%;"
+							@scrolltolower="F_scrollLoad(1)">
+							
+							<view v-if="order.current.list.length > 0" class="list" v-for="(item,index) in order.current.list" :key="index" @tap="skip(item)">
+								<view class="j-flex list-header">
+									<view>订单编号：{{item.storeOrder.orderId}}</view>
+									<view class="col97a font14">{{item.status.title}}</view>
 								</view>
-								<view class="flex-adapt j-flex-col ml-10" style="justify-content: space-between;">
-									<view class="col5A5 mr-10">{{item.name}}</view>
-									<view class="col5A5 colfc4" style="text-align: right;">￥{{item.price}}</view>
+								<view class="list-footer">
+									<view class="j-flex mb-15">
+										<view class="col5A5 font18">{{item.status.payType}}</view>
+										<view class="col5A5">￥{{item.storeOrder.payPrice}}</view>
+									</view>
+									<view class="col919 font14">下单时间：{{item.storeOrder.createTime}}</view>
+									<view class="col919 font14">温馨提示：{{item.status.msg}}</view>
 								</view>
-								
 							</view>
-						</view>
+							
+							<list-end v-if="order.current.end" />
+						</scroll-view>
 						
 						<view v-if="order.current.show" class="no-order-content j-full-center">
 							<view class="title col999" style="margin:20rpx auto;">您今天还没有下单</view>
@@ -52,10 +61,11 @@
 									
 								<view class="list-footer">
 									<view class="j-flex mb-15">
-										<view class="col919 font14">下单时间：{{item.date}}</view>
-										<view class="colfc4">￥{{item.totalPrice}} </view>
+										<view class="col5A5 font18">{{item.status.payType}}</view>
+										<view class="col5A5">￥{{item.totalPrice}} </view>
 									</view>
-									
+									<view class="col919 font14">下单时间：{{item.date}}</view>
+									<view class="col919 font14" v-if="item.status.msg">温馨提示：{{item.status.msg}}</view>
 								</view>
 								<view class="" style="text-align: right;" v-if="item.status.type == 2">
 									<button type="warn" style="display: inline-block;width: 30%;line-height:1.5em;padding: 10rpx 10rpx;" @tap.stop="confirmOrder(item.storeOrder.id)">确认收货</button>
@@ -72,7 +82,7 @@
 		
 		<!-- 自定义tabBar组件 -->
 		<view class="" style="height: 100rpx;">
-			<um-tabs></um-tabs>
+			<uni-tabs></uni-tabs>
 		</view>
 	</view>
 </template>
@@ -136,28 +146,58 @@ export default {
 	computed: {
 	},
 	methods: {
-		// 当前订单
+		
+		// 获取当前订单 评价等级|0=未支付,1=待发货,2=待收货,3=待评价,4=已完成,-3=售后/退款
 		getCurrentOrder(){
 			var current = this.order.current;
+			
+			this.$get(this.$api.order.list,current.data).then(res=>{
+				if(res.data && res.data.length > 0){
+					current.data.page ++;
+					res.data.map(item=>{
+						current.list.push(item)
+					})
 					
-			let data = {
-				action:"getCart"
-			}
-			this.$cloud.cloudFn(data).then(res=>{
-				if(res.data.length > 0){
-					current.list = res.data;
+					if(res.data.length < current.data.limit){
+						current.end = true;
+					}
 					return;
 				}
-				this.order.current.show = true;
-			});
-			
+				if(current.list.length > 0){
+					current.end = true;
+					return;
+				}
+				current.show = true;
+				
+			})
 		},
 		
-		// 历史订单
+		// 确认收货
+		confirmOrder(id) {
+			console.log(typeof id,typeof Number(id));
+			uni.showModal({
+				title: '确认收货',
+				content: '为保障权益，请收到货确认无误后，再确认收货',
+				success: (res)=>{
+					if (res.confirm) {
+						this.$post(this.$api.order.confirm,{id:id},{type:true}).then(res => {
+							uni.showToast({title:"收货成功",icon:"none"})
+							this.order.history.list = [];
+							this.order.history.page = 1;
+							this.getHistoryOrder();
+						})
+					}
+				}
+			})
+		},
+		
+		
+		// 获取历史订单 评价等级|0=未支付,1=待发货,2=待收货,3=待评价,4=已完成,-3=售后/退款
 		getHistoryOrder(){
 			var history = this.order.history;
 			let params = {
-				action:"getOrder"
+				action:"getOrderOne",
+				params:{id:this.orderId}
 			}
 			this.$cloud.cloudFn(params).then(res=>{
 				// uni.showToast({title:"添加成功",icon:"none"})
@@ -191,9 +231,11 @@ export default {
 		// 查看详情
 		skip(data,type){
 			
-			uni.navigateTo({
-				url:"/pages/user/order/orderDetail?orderId="+data.id
-			})
+			if(data.storeOrder){
+				uni.navigateTo({
+					url:"/pages/store/order/orderDetail?orderId="+data.storeOrder.id
+				})
+			}
 		},
 		
 		async switchTab(index) {
@@ -220,18 +262,8 @@ export default {
 		border-bottom: 4rpx solid  #ADB838;
 	}
 	.container{
-		position: relative;
-		.list{
-			border-bottom: 2rpx solid rgba(221,221,221,.5);
-			image{
-				width: 140rpx;
-			}
-			.avatar{
-				width: 150rpx;
-				height: 150rpx;
-				border-radius: 8rpx;
-			}
-		}
+		width: 100%;
+		height: 100%;
 		.tabbar{
 			display: flex;
 			align-items: center;

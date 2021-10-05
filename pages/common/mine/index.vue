@@ -48,14 +48,16 @@
 				infoUrl:"/pages/common/mine/info/index",
 				
 				// 菜单列表
-				menuList:[
-					{name:"地址",icon:"car-fill",url:"/pages/common/mine/address/index"},
-				]
+				menuList:[]
 			}
 		},
 		
-		onShow() {
-			
+		onLoad() {
+			if(this.userInfo.role == 'admins'){
+				this.menuList.push({name:"订单管理",icon:"car-fill",url:"/pages/admin/order/order"})
+			}else{
+				this.menuList.push({name:"地址",icon:"car-fill",url:"/pages/common/mine/address/index"})
+			}
 		},
 		
 		computed: {

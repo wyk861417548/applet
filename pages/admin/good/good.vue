@@ -88,7 +88,9 @@
 					introduct:"",
 					
 					// 图片地址
-					img:""
+					img:"",
+					
+					id:Date.now()
 				}
 			}
 		},

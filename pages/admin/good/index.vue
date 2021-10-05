@@ -163,13 +163,14 @@
 		},
 		onLoad() {
 			
-			this.getCategory();
+			
 			// if(this.$store.state.cartStatus == false){
 			// 	this.getCartList(true);
 			// }
 			
 		},
 		onShow() {
+			this.getCategory();
 			// this.init('good');
 			// this.currentIndex = this.goods[0].id;
 			// this.category_title.title = this.goods[0].name;
