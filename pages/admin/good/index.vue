@@ -1,6 +1,6 @@
 <template>
 	<view class="j-flex-col j-full-curbox" style="overflow: hidden;">
-		<view class="j-flex">
+		<view class="j-flex pb-10 pt-10" style="border-bottom: 2px solid #f2f2f2;box-sizing: border-box;">
 			<button type="default" style="width:40%"  @click="showTip" >新增类别</button>
 			<button type="default" style="width:40%" @click="$skip" data-url="/pages/admin/good/good">新增商品</button>
 		</view>
@@ -78,7 +78,7 @@
 					<view class="box-title">新增商品类别</view>
 					<view class="column">
 						<text class="left" style="width: 200rpx;">类别名称</text>
-						<input class="right" style="width: 300rpx;" type="text" v-model="category.name" placeholder="请输入商品类别名称"/>
+						<input class="right" style="width: 300rpx;" type="text" v-model.trim="category.name" placeholder="请输入商品类别名称"/>
 					</view>
 					
 					<view class="mt-20" style="text-align: right;">
@@ -161,13 +161,7 @@
 				cartOrder:[]
 			}
 		},
-		onLoad() {
-			
-			
-			// if(this.$store.state.cartStatus == false){
-			// 	this.getCartList(true);
-			// }
-			
+		onLoad() {	
 		},
 		onShow() {
 			this.getCategory();
@@ -204,6 +198,10 @@
 			
 			// 确定弹窗事件
 			confirm(){
+				if(!this.category.name){
+					uni.showToast({title:"请填写商品类别",icon:"none"})
+					return;
+				}
 				this.addCategory();
 				this.$refs.category.show = false;
 			},

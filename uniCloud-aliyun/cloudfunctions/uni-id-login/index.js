@@ -140,6 +140,9 @@ exports.main = async (event, context) => {
 		}
 		// 更新地址
 		case "updateAddress":{
+			if(params.isDefault){
+				await db.collection('address').where({isDefault:true,uid:params.uid}).update({isDefault:false})
+			}
 			await db.collection('address').doc(event._id).update(params).then(json=>{
 				res = Object.assign(code,json)
 			});

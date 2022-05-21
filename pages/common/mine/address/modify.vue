@@ -140,6 +140,7 @@
 		
 				this.$cloud.cloudFn(data).then(res=>{
 					uni.showToast({title:"修改成功",icon:"none"})
+					uni.navigateBack();
 				});
 			},
 			

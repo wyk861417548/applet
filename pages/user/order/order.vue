@@ -4,16 +4,16 @@
 		<!-- 内容区  占据除底部tabber组件外的区域 -->
 		<view class="flex-adapt container j-flex-col" style="position: relative;">
 			<view class="tabbar">
-				<view class="item" :class="{active: !tabIndex}" @tap="switchTab(0)">当前订单</view>
-				<view class="item" :class="{active: tabIndex}" @tap="switchTab(1)">历史订单</view>
+				<view class="item" :class="{active: !tabIndex}" @tap="switchTab(0)">购物车</view>
+				<view class="item" :class="{active: tabIndex}" @tap="switchTab(1)">所有订单</view>
 			</view>
 			
 			<view class="flex-adapt bgf1f container-content" style="overflow: auto;">
 				<view style="position: absolute;top: 0;left: 0;right: 0;bottom: 0;padding:0 26rpx;">
 					<!-- 当前订单 begin -->
 					
-					<view style="width: 100%;height: 100%;"  v-show="tabIndex == 0" class="order-current">
-						<view class="container box flex-adapt j-full-curbox p-10">
+					<view  style="width: 100%;height: 100%;"  v-show="tabIndex == 0" class="order-current">
+						<view class="container box flex-adapt j-full-curbox p-10" v-if="!order.current.show">
 							<view class="list flex p-10"  v-for="(item,index) in order.current.list" :key="index">
 								<view class="flex" style="align-items: flex-end;">
 									<view class="avatar" :style="{background:'url('+item.img[0]+') no-repeat 0 0/100% 100%'}"></view>
@@ -82,7 +82,7 @@
 export default {
 	data() {
 		return {
-			// 当前所选
+			// 当前所选 所有订单
 			tabIndex: 0,
 			
 			//订单
@@ -145,9 +145,11 @@ export default {
 			}
 			this.$cloud.cloudFn(data).then(res=>{
 				if(res.data.length > 0){
+					this.order.current.show = false;
 					current.list = res.data;
 					return;
 				}
+				current.list = [];
 				this.order.current.show = true;
 			});
 			
@@ -156,16 +158,17 @@ export default {
 		// 历史订单
 		getHistoryOrder(){
 			var history = this.order.history;
+			history.list = [];
 			let params = {
 				action:"getOrder"
 			}
 			this.$cloud.cloudFn(params).then(res=>{
 				// uni.showToast({title:"添加成功",icon:"none"})
 				if(res.data.length > 0){
-					history.list = res.data;
+					history.list = res.data.reverse();
 					return;
 				}
-				this.$refs.nodata.show = true;
+				
 				
 			});
 			

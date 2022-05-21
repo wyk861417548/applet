@@ -1,6 +1,6 @@
 <template>
 	<view class="j-full-curbox bgf1f container">
-			<view class="box">
+			<view class="box" style="margin-bottom: 0;">
 				<view class="">总营业额度：<text class="colfc4">￥{{orderPrice}} </text></view>
 			</view>
 			
@@ -104,10 +104,8 @@ export default {
 			}
 			
 			this.$cloud.cloudFn(params).then(res=>{
-				// uni.showToast({title:"添加成功",icon:"none"})
-				console.log("res",res.data);
 				if(res.data.length > 0){
-					history.list = res.data;
+					history.list = res.data.reverse();
 					return;
 				}
 				this.$refs.nodata.show = true;
